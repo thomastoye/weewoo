@@ -1,3 +1,8 @@
-{ "files": [], "references": [
-    {"path": "wee-woo-frontend"}
-] }
+{
+  "files": [],
+  "references": [
+    { "path": "wee-woo-domain" },
+    { "path": "wee-woo-server" },
+    { "path": "wee-woo-server-web" },
+  ]
+}
