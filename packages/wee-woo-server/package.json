@@ -15,6 +15,6 @@
         "test": "jest"
     },
     "dependencies": {
-        "@eventstore/db-client": "^0.0.0-alpha.2"
+        "@eventstore/db-client": "^0.0.0-alpha.3"
     }
 }

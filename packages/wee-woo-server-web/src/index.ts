@@ -1,6 +1,6 @@
 import { server } from '@toye.io/wee-woo-server'
-
 ;(async () => {
+  console.log('go!')
   console.log(
     await server({
       name: 'RenameVehicle',
