@@ -13,7 +13,7 @@
         "start": "ts-node src/index.ts"
     },
     "dependencies": {
-        "@eventstore/db-client": "^0.0.0-alpha.3",
+        "@eventstore/db-client": "^0.0.0-alpha.7",
         "@expo/spawn-async": "^1.5.0",
         "get-port": "^5.1.1",
         "uuid": "^8.3.1"
