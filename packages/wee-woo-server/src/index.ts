@@ -3,11 +3,9 @@ import { CommandHandler } from './command-handler'
 import { renameVehicle } from './command-handlers/rename-vehicle'
 import { updateVehiclePosition } from './command-handlers/update-vehicle-position'
 
-const connection = EventStoreConnection.builder()
-  .insecure()
-  .singleNodeConnection('localhost:2113')
-
-export const server: CommandHandler = (command) => {
+export const createServer: (
+  connection: EventStoreConnection
+) => CommandHandler = (connection) => (command) => {
   switch (command.name) {
     case 'UpdateVehiclePosition':
       return updateVehiclePosition(connection)(command)

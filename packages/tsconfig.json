@@ -4,5 +4,7 @@
     { "path": "wee-woo-domain" },
     { "path": "wee-woo-server" },
     { "path": "wee-woo-server-web" },
+    { "path": "wee-woo-reactors" },
+    { "path": "wee-woo-integration-test-utils" },
   ]
 }

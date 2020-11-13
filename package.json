@@ -18,8 +18,8 @@
   },
   "scripts": {
     "build": "tsc --build packages",
-    "lint": "yarn ci:lint --fix",
-    "ci:lint": "lerna run lint && eslint '**/*.{js,ts}' --ignore-path .gitignore",
+    "lint": "eslint '**/*.{js,ts}' --ignore-path .gitignore --fix && lerna run lint",
+    "ci:lint": "eslint '**/*.{js,ts}' --ignore-path .gitignore && lerna run lint",
     "test": "yarn ci:lint && lerna run test",
     "start-eventstore": "docker-compose up",
     "start-eventstore-clean": "rm -rf eventstore-data && mkdir -p eventstore-data/data && mkdir -p eventstore-data/index && mkdir -p eventstore-data/logs && yarn start-eventstore"
