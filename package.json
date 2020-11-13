@@ -17,7 +17,7 @@
     "typescript": "^4.0.3"
   },
   "scripts": {
-    "build": "tsc --build packages",
+    "build": "tsc --build packages && lerna run build",
     "lint": "eslint '**/*.{js,ts}' --ignore-path .gitignore --fix && lerna run lint",
     "ci:lint": "eslint '**/*.{js,ts}' --ignore-path .gitignore && lerna run lint",
     "test": "yarn ci:lint && lerna run test",
