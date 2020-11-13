@@ -1,5 +1,5 @@
 {
-    "name": "@toye.io/wee-woo-domain",
+    "name": "@toye.io/weewoo-server",
     "version": "0.0.0",
     "main": "dist/index.js",
     "devDependencies": {
@@ -12,6 +12,9 @@
     "scripts": {
         "build": "tsc",
         "start": "ts-node src/index.ts",
-        "test": "jest"
+        "test": "jest --passWithNoTests"
+    },
+    "dependencies": {
+        "@eventstore/db-client": "^0.0.0-alpha.3"
     }
 }

@@ -1,4 +1,4 @@
-// import { server } from '@toye.io/wee-woo-server'
+// import { server } from '@toye.io/weewoo-server'
 // ;(async () => {
 //   console.log('go!')
 //   console.log(

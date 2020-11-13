@@ -1,5 +1,5 @@
 {
-    "name": "@toye.io/wee-woo-integration-test-utils",
+    "name": "@toye.io/weewoo-integration-test-utils",
     "version": "0.0.0",
     "main": "dist/index.js",
     "devDependencies": {

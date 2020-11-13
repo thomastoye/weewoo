@@ -1,9 +1,9 @@
 import {
   createEventStore,
   EventStoreForTesting,
-} from '@toye.io/wee-woo-integration-test-utils'
+} from '@toye.io/weewoo-integration-test-utils'
 import { projectPosition } from './project-position'
-import { createServer } from '@toye.io/wee-woo-server'
+import { createServer } from '@toye.io/weewoo-server'
 
 jest.setTimeout(10000)
 

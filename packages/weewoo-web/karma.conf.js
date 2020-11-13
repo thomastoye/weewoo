@@ -20,7 +20,7 @@ module.exports = function (config) {
       clearContext: false, // leave Jasmine Spec Runner output visible in browser
     },
     coverageReporter: {
-      dir: join(__dirname, './coverage/wee-woo-web'),
+      dir: join(__dirname, './coverage/weewoo-web'),
       subdir: '.',
       reporters: [{ type: 'html' }, { type: 'text-summary' }],
     },

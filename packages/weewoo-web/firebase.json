@@ -1,8 +1,8 @@
 {
   "hosting": [
     {
-      "target": "wee-woo-web",
-      "public": "dist/wee-woo-web",
+      "target": "weewoo-web",
+      "public": "dist/weewoo-web",
       "ignore": [
         "**/.*"
       ],

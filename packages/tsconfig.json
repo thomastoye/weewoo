@@ -1,10 +1,10 @@
 {
   "files": [],
   "references": [
-    { "path": "wee-woo-domain" },
-    { "path": "wee-woo-server" },
-    { "path": "wee-woo-server-web" },
-    { "path": "wee-woo-reactors" },
-    { "path": "wee-woo-integration-test-utils" },
+    { "path": "weewoo-domain" },
+    { "path": "weewoo-server" },
+    { "path": "weewoo-server-web" },
+    { "path": "weewoo-reactors" },
+    { "path": "weewoo-integration-test-utils" },
   ]
 }

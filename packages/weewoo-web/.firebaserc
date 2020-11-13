@@ -2,7 +2,7 @@
   "targets": {
     "weewoo-prod": {
       "hosting": {
-        "wee-woo-web": [
+        "weewoo-web": [
           "weewoo-prod"
         ]
       }
