@@ -1,0 +1,21 @@
+{
+    "name": "@toye.io/wee-woo-integration-test-utils",
+    "version": "0.0.0",
+    "main": "dist/index.js",
+    "devDependencies": {
+        "@types/uuid": "^8.3.0",
+        "got": "^10.0.0",
+        "ts-node": "^9.0.0",
+        "typescript": "^4.0.5"
+    },
+    "scripts": {
+        "build": "tsc",
+        "start": "ts-node src/index.ts"
+    },
+    "dependencies": {
+        "@eventstore/db-client": "^0.0.0-alpha.3",
+        "@expo/spawn-async": "^1.5.0",
+        "get-port": "^5.1.1",
+        "uuid": "^8.3.1"
+    }
+}
