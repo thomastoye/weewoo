@@ -21,7 +21,8 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
-      - run: docker pull eventstore/eventstore:20.6.1-buster-slim
+      - name: Pull EventStore container so the tests don't time out
+        run: docker pull eventstore/eventstore:20.6.1-buster-slim
       - run: yarn install --frozen-lockfile
       - run: yarn build
       - run: yarn test
