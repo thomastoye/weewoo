@@ -21,8 +21,8 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
-      - name: Pull EventStore container so the tests don't time out
-        run: docker pull eventstore/eventstore:20.6.1-buster-slim
+      - name: Pre-pull containers for integration tests
+        run: docker pull eventstore/eventstore:20.6.1-buster-slim && docker pull docker.pkg.github.com/ridedott/firestore-emulator-docker/firestore-emulator:latest
       - run: yarn install --frozen-lockfile
       - run: yarn build
       - run: yarn test
