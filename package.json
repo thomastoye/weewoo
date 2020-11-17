@@ -18,6 +18,7 @@
   },
   "scripts": {
     "build": "tsc --build packages && lerna run build",
+    "build:watch": "yarn build && tsc --build packages --watch",
     "lint": "eslint '**/*.{js,ts}' --ignore-path .gitignore --fix && lerna run lint",
     "ci:lint": "eslint '**/*.{js,ts}' --ignore-path .gitignore && lerna run lint",
     "test": "yarn ci:lint && lerna run test",

@@ -88,7 +88,7 @@ export class EventStoreForTesting {
     return new Promise((resolve, reject) => {
       setTimeout(
         () => reject(new Error('EventStore did not start in time')),
-        10000
+        9000
       )
 
       const interval = setInterval(async () => {
