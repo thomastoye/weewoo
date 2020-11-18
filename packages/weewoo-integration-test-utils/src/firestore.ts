@@ -117,8 +117,8 @@ export class FirestoreForTesting {
     logger.debug('Stopping Firestore...')
     await this.connection.terminate()
     logger.silly('Terminated Firestore connection')
-    await spawnAsync('docker', ['stop', this.#containerName])
-    logger.silly(`Executed docker stop ${this.#containerName}`)
+    await spawnAsync('docker', ['kill', this.#containerName])
+    logger.silly(`Executed docker kill ${this.#containerName}`)
   }
 
   private async dumpCollection(
