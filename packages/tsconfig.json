@@ -6,5 +6,7 @@
     { "path": "weewoo-server" },
     { "path": "weewoo-server-web" },
     { "path": "weewoo-reactors" },
+    { "path": "weewoo-location" },
+    { "path": "weewoo-geocode" },
   ]
 }
