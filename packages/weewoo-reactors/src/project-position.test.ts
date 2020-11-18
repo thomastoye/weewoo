@@ -1,29 +1,35 @@
 import {
   createEventStore,
   EventStoreForTesting,
+  createFirestore,
+  FirestoreForTesting,
 } from '@toye.io/weewoo-integration-test-utils'
 import { projectPosition } from './project-position'
 import { createServer } from '@toye.io/weewoo-server'
+import { expect, jest } from '@jest/globals'
 
-jest.setTimeout(10000)
+jest.setTimeout(25000)
 
 let eventStore: EventStoreForTesting
+let firestore: FirestoreForTesting
 
 beforeEach(async () => {
   eventStore = await createEventStore()
+  firestore = await createFirestore()
 })
 
 afterEach(async () => {
   if (eventStore != null) {
     await eventStore.stop()
   }
+
+  if (firestore != null) {
+    await firestore.stop()
+  }
 })
 
 test('Position projector', async () => {
-  const mock = jest.fn(() => Promise.resolve())
-
   const connection = eventStore.connection
-
   const server = createServer(connection)
 
   await server({
@@ -97,37 +103,28 @@ test('Position projector', async () => {
     vehicleId: 'O38',
   })
 
-  await projectPosition(connection, 5, mock)
+  await server({
+    name: 'EndIntegrationTest',
+  })
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  expect(mock.mock.calls).toMatchInlineSnapshot(`
-    Array [
-      Array [
-        Object {
-          "message": "At 1602858380, position of vehicle Vehicle-O37 was {\\"lat\\":6.051,\\"lon\\":3.123456}",
+  await projectPosition(connection, firestore.connection)
+
+  expect(await firestore.dumpComplete()).toMatchInlineSnapshot(`
+    Object {
+      "position": Object {
+        "Vehicle-O37": Object {
+          "lastKnownPosition": Object {
+            "lat": 6.052,
+            "lon": 3.123456,
+          },
         },
-      ],
-      Array [
-        Object {
-          "message": "At 1602858381, position of vehicle Vehicle-O38 was {\\"lat\\":5,\\"lon\\":3.123456}",
+        "Vehicle-O38": Object {
+          "lastKnownPosition": Object {
+            "lat": 5.011,
+            "lon": 3.16,
+          },
         },
-      ],
-      Array [
-        Object {
-          "message": "At 1602858382, position of vehicle Vehicle-O37 was {\\"lat\\":6.052,\\"lon\\":3.123456}",
-        },
-      ],
-      Array [
-        Object {
-          "message": "At 1602858383, position of vehicle Vehicle-O38 was {\\"lat\\":5.1,\\"lon\\":3.133456}",
-        },
-      ],
-      Array [
-        Object {
-          "message": "At 1602858384, position of vehicle Vehicle-O38 was {\\"lat\\":5,\\"lon\\":3.123456}",
-        },
-      ],
-    ]
+      },
+    }
   `)
 })

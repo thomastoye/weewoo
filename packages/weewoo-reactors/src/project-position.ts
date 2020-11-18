@@ -3,6 +3,7 @@ import {
   JSONRecordedEvent,
   subscribeToAll,
 } from '@eventstore/db-client'
+import { Firestore } from '@google-cloud/firestore'
 
 export type CommitPositionCheckpointer = {
   getLastPosition: () => Promise<bigint | null>
@@ -22,8 +23,11 @@ export class InMemoryCheckpointer implements CommitPositionCheckpointer {
 }
 
 export type ProjectorOptions = {
-  /* Stop the projector after handling this many relevant events */
-  stopAfter?: number
+  /* Stop the projector when an event of this type is received on the specified stream */
+  stopOnEncounteringEvent?: {
+    streamId: string
+    eventType: string
+  }
 
   // /* Start at this commit offset */
   // startCommitOffset: null | number
@@ -33,7 +37,10 @@ export type ProjectorOptions = {
 
 export class Projector {
   #connection: EventStoreConnection
-  #stopAfter: number | null
+  #stopOnEncounteringEvent: {
+    streamId: string
+    eventType: string
+  } | null
   #relevantEventsHandled = 0
   #saveCommitPositionEveryNRelevantEvents: number | null
   #checkpointer: CommitPositionCheckpointer
@@ -49,7 +56,7 @@ export class Projector {
     options: ProjectorOptions
   ) {
     this.#connection = connection
-    this.#stopAfter = options.stopAfter || null
+    this.#stopOnEncounteringEvent = options.stopOnEncounteringEvent || null
     this.#saveCommitPositionEveryNRelevantEvents =
       options.saveCommitPositionEveryNRelevantEvents || null
     this.#checkpointer = checkpointer
@@ -72,6 +79,17 @@ export class Projector {
 
     for await (const resolvedEvent of subscription) {
       if (
+        this.#stopOnEncounteringEvent != null &&
+        resolvedEvent.event?.streamId ===
+          this.#stopOnEncounteringEvent.streamId &&
+        resolvedEvent.event.eventType ===
+          this.#stopOnEncounteringEvent.eventType
+      ) {
+        subscription.unsubscribe()
+        break
+      }
+
+      if (
         resolvedEvent.event == null ||
         !resolvedEvent.event.isJson ||
         !this.#isRelevantEvent(resolvedEvent.event)
@@ -81,47 +99,20 @@ export class Projector {
 
       await this.#handleEvent(resolvedEvent.event)
       this.#relevantEventsHandled++
-
-      if (this.shouldStop) {
-        subscription.unsubscribe()
-        break
-      }
     }
-  }
-
-  get shouldStop(): boolean {
-    if (this.#stopAfter == null) {
-      return false
-    }
-
-    return this.#relevantEventsHandled >= this.#stopAfter
   }
 }
 
 export const projectPosition = async (
   connection: EventStoreConnection,
-  stopAfter: number,
-  callback: (res: { message: string }) => Promise<void>
+  firestore: Firestore
 ): Promise<void> => {
   const isRelevantEvent = (event: JSONRecordedEvent): boolean =>
     event.eventType === 'VehicleMoved'
 
-  const vehicleMovedToString = (
-    streamId: string,
-    data: Record<string, unknown> | Uint8Array
-  ) => {
-    if (data == null || data instanceof Uint8Array) {
-      return ''
-    }
-
-    return `At ${
-      data.positionAtTime
-    }, position of vehicle ${streamId} was ${JSON.stringify(data.position)}`
-  }
-
   const handleEvent = async (event: JSONRecordedEvent) => {
-    callback({
-      message: vehicleMovedToString(event.streamId, event.data),
+    await firestore.collection('position').doc(event.streamId).set({
+      lastKnownPosition: event.data.position,
     })
   }
 
@@ -131,7 +122,10 @@ export const projectPosition = async (
     handleEvent,
     new InMemoryCheckpointer(),
     {
-      stopAfter,
+      stopOnEncounteringEvent: {
+        streamId: 'IntegrationTest',
+        eventType: 'EndIntegrationTest',
+      },
     }
   )
 
