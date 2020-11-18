@@ -97,6 +97,7 @@ export class Projector {
         continue
       }
 
+      // TODO error handling
       await this.#handleEvent(resolvedEvent.event)
       this.#relevantEventsHandled++
     }
