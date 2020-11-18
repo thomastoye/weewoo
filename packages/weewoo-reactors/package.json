@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "main": "dist/index.js",
   "devDependencies": {
+    "@google-cloud/firestore": "^4.7.1",
     "@toye.io/weewoo-integration-test-utils": "^0.0.0",
     "@toye.io/weewoo-server": "^0.0.0",
     "@types/jest": "^26.0.15",
