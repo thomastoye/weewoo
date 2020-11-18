@@ -38,7 +38,7 @@ export const createEventStore = async (): Promise<EventStoreForTesting> => {
 
   logger.debug('Waiting until EventStore is ready...')
   await es.waitUntilReady()
-  logger.debug('EventStore ready!')
+  logger.debug(`EventStore ready on ${es.url}!`)
 
   return es
 }
@@ -73,40 +73,47 @@ export class EventStoreForTesting {
 
   async waitUntilReady(): Promise<void> {
     return new Promise((resolve, reject) => {
-      let timeout: NodeJS.Timeout | null = null
-      let interval: NodeJS.Timeout | null = null
-
-      const cleanUpTimers = () => {
-        if (timeout != null) {
-          clearTimeout(timeout)
-        }
-        if (interval != null) {
-          clearInterval(interval)
-        }
+      const cleanUps: (() => void)[] = []
+      const cleanUp = () => {
+        logger.silly(
+          `Doing ${cleanUps.length} clean-ups now that EventStore is ready...`
+        )
+        return cleanUps.forEach((doClean) => doClean())
       }
 
-      timeout = setTimeout(() => {
-        cleanUpTimers()
+      const timeout = setTimeout(() => {
+        cleanUp()
         logger.error('EventStore did not start in time!')
         return reject(new Error('EventStore did not start in time'))
       }, 9000)
+      cleanUps.push(() => clearTimeout(timeout))
 
-      interval = setInterval(async () => {
+      const interval = setInterval(async () => {
         try {
-          const health = await got(this.healthUrl, {
+          const req = got(this.healthUrl, {
             throwHttpErrors: false,
             dnsCache: false,
           })
 
+          // (Cancelling a finished request does nothing)
+          cleanUps.push(() => req.cancel())
+
+          const health = await req
+
           if (health.statusCode >= 200 && health.statusCode < 300) {
-            cleanUpTimers()
+            cleanUp()
             resolve()
           }
         } catch (err) {
-          // Ignore
-          logger.silly('EventStore not ready yet')
+          if (err.name === 'CancelError') {
+            // Ignore
+          } else {
+            logger.silly('EventStore not ready yet...', err)
+          }
         }
       }, 1000)
+
+      cleanUps.push(() => clearInterval(interval))
     })
   }
 

@@ -59,7 +59,7 @@ describe('Firestore for integration testing', () => {
   })
 
   test('Dump entire Firestore', async () => {
-    const dump = await firestore.dump()
+    const dump = await firestore.dumpComplete()
 
     expect(dump).toMatchInlineSnapshot(`
       Object {

@@ -27,7 +27,7 @@ export const createFirestore = async (): Promise<FirestoreForTesting> => {
 
   logger.debug('Waiting until Firestore is ready...')
   await firestore.waitUntilReady()
-  logger.debug('Firestore is ready!')
+  logger.debug(`Firestore is ready on ${firestore.url}!`)
 
   return firestore
 }
@@ -65,43 +65,51 @@ export class FirestoreForTesting {
 
   async waitUntilReady(): Promise<void> {
     return new Promise((resolve, reject) => {
-      let timeout: NodeJS.Timeout | null = null
-      let interval: NodeJS.Timeout | null = null
-
-      const cleanUpTimers = () => {
-        if (timeout != null) {
-          clearTimeout(timeout)
-        }
-        if (interval != null) {
-          clearInterval(interval)
-        }
+      const cleanUps: (() => void)[] = []
+      const cleanUp = () => {
+        logger.silly(
+          `Doing ${cleanUps.length} clean-ups now that Firestore is ready...`
+        )
+        return cleanUps.forEach((doClean) => doClean())
       }
 
-      timeout = setTimeout(() => {
-        cleanUpTimers()
+      const timeout = setTimeout(() => {
+        cleanUp()
         return reject(new Error('Firestore did not start in time'))
       }, 9000)
 
-      interval = setInterval(async () => {
+      cleanUps.push(() => clearTimeout(timeout))
+
+      const interval = setInterval(async () => {
         try {
-          const health = await got(this.healthUrl, {
+          const req = got(this.healthUrl, {
             throwHttpErrors: false,
             dnsCache: false,
           })
 
+          // (Cancelling a finished request does nothing)
+          cleanUps.push(() => req.cancel())
+
+          const health = await req
+
           if (health.statusCode >= 200 && health.statusCode < 300) {
-            cleanUpTimers()
+            cleanUp()
             resolve()
           }
         } catch (err) {
-          // Ignore
-          logger.silly('Firestore not ready yet...')
+          if (err.name === 'CancelError') {
+            // Ignore
+          } else {
+            logger.silly('Firestore not ready yet...', err)
+          }
         }
-      }, 300)
+      }, 100)
+
+      cleanUps.push(() => clearInterval(interval))
     })
   }
 
-  async dump(): Promise<Record<string, Record<string, unknown>>> {
+  async dumpComplete(): Promise<Record<string, Record<string, unknown>>> {
     const collections = await this.connection.listCollections()
 
     const dump = await Promise.all(
@@ -121,7 +129,7 @@ export class FirestoreForTesting {
     logger.silly(`Executed docker kill ${this.#containerName}`)
   }
 
-  private async dumpCollection(
+  async dumpCollection(
     collection: FirebaseFirestore.CollectionReference<
       FirebaseFirestore.DocumentData
     >
