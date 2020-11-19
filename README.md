@@ -1,5 +1,7 @@
 # Wee Woo 🚑
 
+[![Actions Status](https://github.com/thomastoye/weewoo/workflows/node/badge.svg)](https://github.com/thomastoye/weewoo/actions)
+
 An experiment in Event Sourcing with JavaScript/TypeScript.
 
 ## The domain
