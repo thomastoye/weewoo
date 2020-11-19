@@ -112,9 +112,12 @@ export const projectPosition = async (
     event.eventType === 'VehicleMoved'
 
   const handleEvent = async (event: JSONRecordedEvent) => {
-    await firestore.collection('position').doc(event.streamId).set({
-      lastKnownPosition: event.data.position,
-    })
+    await firestore
+      .collection('position')
+      .doc(event.streamId)
+      .set({
+        lastKnownPosition: (event.data as any).position,
+      })
   }
 
   const projector = new Projector(

@@ -18,7 +18,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@eventstore/db-client": "^0.0.0-alpha.7",
+    "@eventstore/db-client": "^0.0.0-alpha.8",
     "delay": "^4.4.0"
   }
 }
