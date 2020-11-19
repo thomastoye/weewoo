@@ -14,6 +14,7 @@
     "lerna": "^3.22.1",
     "lint-staged": "^10.5.1",
     "prettier": "^2.1.2",
+    "ts-monocheck": "^0.0.7",
     "typescript": "^4.0.5"
   },
   "scripts": {
@@ -21,7 +22,7 @@
     "build:watch": "yarn build && tsc --build packages --watch",
     "lint": "eslint '**/*.{js,ts}' --ignore-path .gitignore --fix && lerna run lint",
     "ci:lint": "eslint '**/*.{js,ts}' --ignore-path .gitignore && lerna run lint",
-    "test": "yarn ci:lint && lerna run test",
+    "test": "yarn ci:lint && (yarn ts-monocheck || true) && lerna run test",
     "start-eventstore": "docker-compose up",
     "start-eventstore-clean": "rm -rf eventstore-data && mkdir -p eventstore-data/data && mkdir -p eventstore-data/index && mkdir -p eventstore-data/logs && yarn start-eventstore"
   },

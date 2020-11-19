@@ -7,5 +7,9 @@
   "extends": "../../tsconfig.json",
   "include": [
     "src/**/*"
+  ],
+  "references": [
+    { "path": "../weewoo-integration-test-utils" },
+    { "path": "../weewoo-server" },
   ]
 }
