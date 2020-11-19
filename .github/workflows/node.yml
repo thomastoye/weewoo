@@ -23,6 +23,8 @@ jobs:
             ${{ runner.os }}-yarn-
       - name: Login to docker.pkg.github.com
         run: echo ${{ secrets.GH_DOCKER_REGISTRY_PAT }} | docker login docker.pkg.github.com -u ${{ secrets.GH_DOCKER_REGISTRY_USERNAME }} --password-stdin
+      - name: Upgrade Google Chrome
+        run: sudo apt-get update && sudo apt-get upgrade google-chrome-stable && google-chrome --version
       - name: Pre-pull containers for integration tests
         run: docker pull eventstore/eventstore:20.6.1-buster-slim && docker pull docker.pkg.github.com/ridedott/firestore-emulator-docker/firestore-emulator:latest
       - run: yarn install --frozen-lockfile
