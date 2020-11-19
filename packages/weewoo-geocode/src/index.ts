@@ -1,1 +1,1 @@
-export { reverseGeocode, ReverseGeocodedLocation } from './reverse-geocode'
+export * from './reverse-geocode'
