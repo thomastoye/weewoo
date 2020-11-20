@@ -109,20 +109,18 @@ test('Position projector', async () => {
 
   await projectPosition(connection, firestore.connection)
 
-  expect(await firestore.dumpComplete()).toMatchInlineSnapshot(`
+  expect(await firestore.dumpCollection('position')).toMatchInlineSnapshot(`
     Object {
-      "position": Object {
-        "Vehicle-O37": Object {
-          "lastKnownPosition": Object {
-            "lat": 6.052,
-            "lon": 3.123456,
-          },
+      "Vehicle-O37": Object {
+        "lastKnownPosition": Object {
+          "lat": 6.052,
+          "lon": 3.123456,
         },
-        "Vehicle-O38": Object {
-          "lastKnownPosition": Object {
-            "lat": 5.011,
-            "lon": 3.16,
-          },
+      },
+      "Vehicle-O38": Object {
+        "lastKnownPosition": Object {
+          "lat": 5.011,
+          "lon": 3.16,
         },
       },
     }

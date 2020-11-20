@@ -1,26 +1,10 @@
 import {
   EventStoreConnection,
   JSONRecordedEvent,
+  ResolvedEvent,
   subscribeToAll,
 } from '@eventstore/db-client'
 import { Firestore } from '@google-cloud/firestore'
-
-export type CommitPositionCheckpointer = {
-  getLastPosition: () => Promise<bigint | null>
-  savePosition: (position: bigint) => Promise<void>
-}
-
-export class InMemoryCheckpointer implements CommitPositionCheckpointer {
-  #position: null | bigint = null
-
-  async getLastPosition(): Promise<bigint | null> {
-    return this.#position
-  }
-
-  async savePosition(position: bigint): Promise<void> {
-    this.#position = position
-  }
-}
 
 export type ProjectorOptions = {
   /* Stop the projector when an event of this type is received on the specified stream */
@@ -32,36 +16,43 @@ export type ProjectorOptions = {
   // /* Start at this commit offset */
   // startCommitOffset: null | number
 
-  saveCommitPositionEveryNRelevantEvents?: number
+  maxBatchSize: number
+  maxQueueTimeMs: number
 }
 
-export class Projector {
+export class EsdbToFirestoreProjector {
+  #name: string
   #connection: EventStoreConnection
+  #firestore: Firestore
   #stopOnEncounteringEvent: {
     streamId: string
     eventType: string
   } | null
-  #relevantEventsHandled = 0
-  #saveCommitPositionEveryNRelevantEvents: number | null
-  #checkpointer: CommitPositionCheckpointer
-  #isRelevantEvent: (event: JSONRecordedEvent) => boolean
-  #handleEvent: (event: JSONRecordedEvent) => Promise<void>
+  #handleEvent: (
+    event: JSONRecordedEvent,
+    batch: FirebaseFirestore.WriteBatch
+  ) => Promise<void>
+  #maxBatchSize: number
+  #maxQueueTimeMs: number
   #started = false
 
   constructor(
+    name: string,
     connection: EventStoreConnection,
-    isRelevantEvent: (event: JSONRecordedEvent) => boolean,
-    handleEvent: (event: JSONRecordedEvent) => Promise<void>,
-    checkpointer: CommitPositionCheckpointer,
+    firestore: Firestore,
+    handleEvent: (
+      event: JSONRecordedEvent,
+      batch: FirebaseFirestore.WriteBatch
+    ) => Promise<void>,
     options: ProjectorOptions
   ) {
+    this.#name = name
     this.#connection = connection
+    this.#firestore = firestore
     this.#stopOnEncounteringEvent = options.stopOnEncounteringEvent || null
-    this.#saveCommitPositionEveryNRelevantEvents =
-      options.saveCommitPositionEveryNRelevantEvents || null
-    this.#checkpointer = checkpointer
-    this.#isRelevantEvent = isRelevantEvent
     this.#handleEvent = handleEvent
+    this.#maxBatchSize = options.maxBatchSize
+    this.#maxQueueTimeMs = options.maxQueueTimeMs
   }
 
   async start(): Promise<void> {
@@ -70,37 +61,52 @@ export class Projector {
     }
 
     this.#started = true
-    this.#relevantEventsHandled = 0
 
     const subscription = await subscribeToAll()
       .fromStart()
       .doNotResolveLink()
       .execute(this.#connection)
 
+    let batch = this.#firestore.batch()
+    let runningBatchStart = process.hrtime()
+    let runningBatchSize = 0
     for await (const resolvedEvent of subscription) {
+      if (resolvedEvent.event != null && resolvedEvent.event.isJson) {
+        // TODO error handling
+        await this.#handleEvent(resolvedEvent.event, batch)
+      }
+
+      runningBatchSize++
+
+      const sinceBatchStart = process.hrtime(runningBatchStart)
       if (
-        this.#stopOnEncounteringEvent != null &&
-        resolvedEvent.event?.streamId ===
-          this.#stopOnEncounteringEvent.streamId &&
-        resolvedEvent.event.eventType ===
-          this.#stopOnEncounteringEvent.eventType
+        runningBatchSize >= this.#maxBatchSize ||
+        sinceBatchStart[0] ||
+        this.isTerminalEvent(resolvedEvent)
       ) {
+        batch.set(this.#firestore.collection('projector').doc(this.#name), {
+          commitOffset: resolvedEvent.commitPosition,
+        })
+        await batch.commit()
+        batch = this.#firestore.batch()
+        runningBatchSize = 0
+        runningBatchStart = process.hrtime()
+      }
+
+      if (this.isTerminalEvent(resolvedEvent)) {
         subscription.unsubscribe()
         break
       }
-
-      if (
-        resolvedEvent.event == null ||
-        !resolvedEvent.event.isJson ||
-        !this.#isRelevantEvent(resolvedEvent.event)
-      ) {
-        continue
-      }
-
-      // TODO error handling
-      await this.#handleEvent(resolvedEvent.event)
-      this.#relevantEventsHandled++
     }
+  }
+
+  isTerminalEvent(resolvedEvent: ResolvedEvent): boolean {
+    return (
+      this.#stopOnEncounteringEvent != null &&
+      resolvedEvent.event?.streamId ===
+        this.#stopOnEncounteringEvent.streamId &&
+      resolvedEvent.event.eventType === this.#stopOnEncounteringEvent.eventType
+    )
   }
 }
 
@@ -108,28 +114,34 @@ export const projectPosition = async (
   connection: EventStoreConnection,
   firestore: Firestore
 ): Promise<void> => {
-  const isRelevantEvent = (event: JSONRecordedEvent): boolean =>
-    event.eventType === 'VehicleMoved'
+  const handleEvent = async (
+    event: JSONRecordedEvent,
+    batch: FirebaseFirestore.WriteBatch
+  ) => {
+    if (
+      event.eventType !== 'VehicleMoved' ||
+      !event.streamId.startsWith('Vehicle')
+    ) {
+      return
+    }
 
-  const handleEvent = async (event: JSONRecordedEvent) => {
-    await firestore
-      .collection('position')
-      .doc(event.streamId)
-      .set({
-        lastKnownPosition: (event.data as any).position,
-      })
+    batch.set(firestore.collection('position').doc(event.streamId), {
+      lastKnownPosition: (event.data as any).position,
+    })
   }
 
-  const projector = new Projector(
+  const projector = new EsdbToFirestoreProjector(
+    'position-projector',
     connection,
-    isRelevantEvent,
+    firestore,
     handleEvent,
-    new InMemoryCheckpointer(),
     {
       stopOnEncounteringEvent: {
         streamId: 'IntegrationTest',
         eventType: 'EndIntegrationTest',
       },
+      maxBatchSize: 100,
+      maxQueueTimeMs: 200,
     }
   )
 

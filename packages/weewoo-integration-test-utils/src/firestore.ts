@@ -114,7 +114,7 @@ export class FirestoreForTesting {
 
     const dump = await Promise.all(
       collections.map(async (collection) => {
-        return [collection.id, await this.dumpCollection(collection)]
+        return [collection.id, await this.dumpCollection(collection.id)]
       })
     )
 
@@ -129,15 +129,13 @@ export class FirestoreForTesting {
     logger.silly(`Executed docker kill ${this.#containerName}`)
   }
 
-  async dumpCollection(
-    collection: FirebaseFirestore.CollectionReference<
-      FirebaseFirestore.DocumentData
-    >
-  ): Promise<Record<string, unknown>> {
+  async dumpCollection(collectionId: string): Promise<Record<string, unknown>> {
     const allDocs = await Promise.all(
-      (await collection.listDocuments()).map(async (reference) => {
-        return [reference.id, (await reference.get()).data()]
-      })
+      (await this.connection.collection(collectionId).listDocuments()).map(
+        async (reference) => {
+          return [reference.id, (await reference.get()).data()]
+        }
+      )
     )
 
     return Object.fromEntries(allDocs)
