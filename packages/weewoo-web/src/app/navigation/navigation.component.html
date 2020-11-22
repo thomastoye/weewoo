@@ -1,5 +1,6 @@
 <mat-toolbar color="primary">
   <span>Wee Woo</span>
-  <button mat-button>Home</button>
+  <button mat-button [routerLink]="['/']">Home</button>
+  <button mat-button [routerLink]="['/map']">Map</button>
 </mat-toolbar>
-<app-dashboard></app-dashboard>
+<router-outlet></router-outlet>

@@ -1,0 +1,12 @@
+<google-map [center]="center" [zoom]="zoom" [width]="'100%'" [height]="'100%'" class="vehicle-location-google-map">
+  <map-marker
+    *ngFor="let vehicleLocation of vehicleLocations$ | async; trackBy:vehicleLocationTrackBy"
+    [position]="vehicleLocation.location"
+    (mapClick)="openInfoWindow(marker, vehicleLocation)"
+    [options]="{ icon: iconUrlForVehicle(vehicleLocation) }"
+    #marker="mapMarker"
+  ></map-marker>
+
+
+  <map-info-window>{{ selectedVehicle?.vehicleFriendlyName }}</map-info-window>
+</google-map>

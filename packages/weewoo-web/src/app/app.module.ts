@@ -15,13 +15,21 @@ import { DashboardComponent } from './dashboard/dashboard.component'
 import { MatGridListModule } from '@angular/material/grid-list'
 import { MatCardModule } from '@angular/material/card'
 import { MatMenuModule } from '@angular/material/menu'
+import { VehicleLocationMapComponent } from './vehicle-location-map/vehicle-location-map.component'
+import { GoogleMapsModule } from '@angular/google-maps'
 
 @NgModule({
-  declarations: [AppComponent, NavigationComponent, DashboardComponent],
+  declarations: [
+    AppComponent,
+    NavigationComponent,
+    DashboardComponent,
+    VehicleLocationMapComponent,
+  ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
+    GoogleMapsModule,
     LayoutModule,
     MatToolbarModule,
     MatButtonModule,
