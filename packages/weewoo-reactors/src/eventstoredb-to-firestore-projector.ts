@@ -283,10 +283,12 @@ export class EsdbToFirestoreProjector {
     }
 
     this.#started = true
-    let startAfterCommitPosition: bigint | null = null
 
     // eslint-disable-next-line no-constant-condition
     while (true) {
+      const startAfterCommitPosition:
+        | bigint
+        | null = await this.getLastSuccessfulCommitPosition()
       const startAfter:
         | {
             status: 'error'
@@ -301,9 +303,9 @@ export class EsdbToFirestoreProjector {
         this.#logger.info(`Projector done successfully`)
         return
       } else {
-        startAfterCommitPosition = startAfter.lastSuccessfulCommitPosition
         this.#logger.debug(
-          `Projector hit a snag, last successful commit at ${startAfterCommitPosition}`
+          `Projector hit a snag, restarting. Error was`,
+          startAfter.error
         )
       }
     }
@@ -374,6 +376,25 @@ export class EsdbToFirestoreProjector {
     }
 
     return { status: 'success', reason: 'end of stream' }
+  }
+
+  async getLastSuccessfulCommitPosition(): Promise<bigint | null> {
+    const doc = await this.#firestore
+      .collection('projector')
+      .doc(this.#projectorName)
+      .get()
+
+    if (doc == null || !doc.exists) {
+      return null
+    }
+
+    const data = doc.data()
+
+    if (data == null) {
+      return null
+    }
+
+    return data.commitPosition || null
   }
 
   private createBatcher(): Batcher {
