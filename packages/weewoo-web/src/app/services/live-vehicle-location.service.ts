@@ -1,13 +1,6 @@
-import { Injectable, OnDestroy } from '@angular/core'
+import { Injectable, InjectionToken, OnDestroy } from '@angular/core'
 import { BehaviorSubject, interval, Observable, Subject } from 'rxjs'
 import { takeUntil } from 'rxjs/operators'
-
-// @Injectable({
-//   providedIn: 'root',
-// })
-// export class LiveVehicleLocationService {
-//   constructor() {}
-// }
 
 export type VehicleLocation = {
   vehicleId: string
@@ -20,10 +13,15 @@ export type VehicleLocation = {
   kind: 'ambulance' | 'logistics'
 }
 
+export type VehicleLocationService = {
+  getLocations$(): Observable<readonly VehicleLocation[]>
+}
+
 @Injectable({
   providedIn: 'root',
 })
-export class FakeVehicleLocationService implements OnDestroy {
+export class FakeVehicleLocationService
+  implements OnDestroy, VehicleLocationService {
   #locations = new BehaviorSubject<readonly VehicleLocation[]>([
     {
       location: { lat: 51.035095147365226, lng: 3.7209472826226833 },
@@ -82,11 +80,15 @@ export class FakeVehicleLocationService implements OnDestroy {
       })
   }
 
-  getLocations(): Observable<readonly VehicleLocation[]> {
+  getLocations$(): Observable<readonly VehicleLocation[]> {
     return this.#locations.asObservable()
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.#destroy.next()
   }
 }
+
+export const VEHICLE_LOCATION_SERVICE = new InjectionToken<
+  VehicleLocationService
+>('vehicle-location')

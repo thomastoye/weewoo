@@ -1,14 +1,20 @@
-import { Component, OnInit, ViewChild } from '@angular/core'
+import { Component, Inject, ViewChild } from '@angular/core'
 import { GoogleMap, MapInfoWindow, MapMarker } from '@angular/google-maps'
 import { Observable } from 'rxjs'
 import { UntilDestroy } from '@ngneat/until-destroy'
 import {
-  FakeVehicleLocationService,
   VehicleLocation,
-} from './live-vehicle-location.service'
+  VehicleLocationService,
+  VEHICLE_LOCATION_SERVICE,
+} from '../services/live-vehicle-location.service'
 
 const AMBULANCE_ICON = {
   url: '/assets/icons/ambulance.svg',
+  scaledSize: new google.maps.Size(25, 25),
+}
+
+const LOGISTICS_ICON = {
+  url: '/assets/icons/delivery.svg',
   scaledSize: new google.maps.Size(25, 25),
 }
 
@@ -18,7 +24,7 @@ const AMBULANCE_ICON = {
   templateUrl: './vehicle-location-map.component.html',
   styleUrls: ['./vehicle-location-map.component.scss'],
 })
-export class VehicleLocationMapComponent implements OnInit {
+export class VehicleLocationMapComponent {
   @ViewChild(GoogleMap) googleMap: GoogleMap | undefined
   @ViewChild(MapInfoWindow) infoWindow: MapInfoWindow | undefined
 
@@ -33,11 +39,12 @@ export class VehicleLocationMapComponent implements OnInit {
     vehicleFriendlyName: string
   } | null = null
 
-  constructor(private locationService: FakeVehicleLocationService) {
-    this.vehicleLocations$ = locationService.getLocations()
+  constructor(
+    @Inject(VEHICLE_LOCATION_SERVICE)
+    private locationService: VehicleLocationService
+  ) {
+    this.vehicleLocations$ = locationService.getLocations$()
   }
-
-  ngOnInit(): void {}
 
   openInfoWindow(marker: MapMarker, vehicleLocation: VehicleLocation): void {
     this.infoWindow?.open(marker)
@@ -61,6 +68,8 @@ export class VehicleLocationMapComponent implements OnInit {
     switch (vehicle.kind) {
       case 'ambulance':
         return AMBULANCE_ICON
+      case 'logistics':
+        return LOGISTICS_ICON
       default:
         return undefined
     }

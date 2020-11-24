@@ -2,5 +2,7 @@
   <span>Wee Woo</span>
   <button mat-button [routerLink]="['/']">Home</button>
   <button mat-button [routerLink]="['/map']">Map</button>
+  <button mat-button id="loginButton" (click)="login()" *ngIf="(isLoggedIn$ | async) === false">Login</button>
+  <button mat-button id="logoutButton" (click)="logout()" *ngIf="(isLoggedIn$ | async) === true">Log out</button>
 </mat-toolbar>
 <router-outlet></router-outlet>

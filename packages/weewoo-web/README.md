@@ -29,3 +29,6 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 ## Attributions
 
 * [Ambulance Emoji Icon](https://iconscout.com/icons/ambulance) by [Twitter Emoji](https://iconscout.com/contributors/twitter-inc) on [Iconscout](https://iconscout.com)
+* [Fire truck Emoji Icon](https://iconscout.com/icons/fire) by [Twitter Emoji](https://iconscout.com/contributors/twitter-inc) on [Iconscout](https://iconscout.com)
+* [Police Emoji Icon](https://iconscout.com/icons/police) by [Twitter Emoji](https://iconscout.com/contributors/twitter-inc) on [Iconscout](https://iconscout.com)
+* [Delivery Emoji Icon](https://iconscout.com/icons/delivery) by [Twitter Emoji](https://iconscout.com/contributors/twitter-inc) on [Iconscout](https://iconscout.com)

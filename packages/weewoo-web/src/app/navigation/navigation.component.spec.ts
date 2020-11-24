@@ -8,6 +8,8 @@ import { MatSidenavModule } from '@angular/material/sidenav'
 import { MatToolbarModule } from '@angular/material/toolbar'
 
 import { NavigationComponent } from './navigation.component'
+import { AUTH_SERVICE, MockAuthService } from '../services/auth.service'
+import { MatSnackBarModule } from '@angular/material/snack-bar'
 
 describe('NavigationComponent', () => {
   let component: NavigationComponent
@@ -25,7 +27,9 @@ describe('NavigationComponent', () => {
           MatListModule,
           MatSidenavModule,
           MatToolbarModule,
+          MatSnackBarModule,
         ],
+        providers: [{ provide: AUTH_SERVICE, useClass: MockAuthService }],
       }).compileComponents()
     })
   )
@@ -38,5 +42,25 @@ describe('NavigationComponent', () => {
 
   it('should compile', () => {
     expect(component).toBeTruthy()
+  })
+
+  it('should show login and hide logout button', async () => {
+    fixture.detectChanges()
+    expect(fixture.nativeElement.querySelector('#loginButton')).not.toBe(null)
+    expect(fixture.nativeElement.querySelector('#logoutButton')).toBe(null)
+  })
+
+  it('should show logout and hide login button when logged in', async () => {
+    await component.login()
+    fixture.detectChanges()
+    expect(fixture.nativeElement.querySelector('#loginButton')).toBe(null)
+    expect(fixture.nativeElement.querySelector('#logoutButton')).not.toBe(null)
+  })
+
+  it('should show login and hide logout button when logging out', async () => {
+    await component.logout()
+    fixture.detectChanges()
+    expect(fixture.nativeElement.querySelector('#logoutButton')).toBe(null)
+    expect(fixture.nativeElement.querySelector('#loginButton')).not.toBe(null)
   })
 })

@@ -1,7 +1,14 @@
 import { NgModule } from '@angular/core'
 import { Routes, RouterModule } from '@angular/router'
+import {
+  AngularFireAuthGuard,
+  redirectUnauthorizedTo,
+} from '@angular/fire/auth-guard'
 import { DashboardComponent } from './dashboard/dashboard.component'
 import { VehicleLocationMapComponent } from './vehicle-location-map/vehicle-location-map.component'
+import { LoginComponent } from './login/login.component'
+
+const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(['login'])
 
 const routes: Routes = [
   {
@@ -11,6 +18,12 @@ const routes: Routes = [
   {
     path: 'map',
     component: VehicleLocationMapComponent,
+    canActivate: [AngularFireAuthGuard],
+    data: { authGuardPipe: redirectUnauthorizedToLogin },
+  },
+  {
+    path: 'login',
+    component: LoginComponent,
   },
 ]
 
