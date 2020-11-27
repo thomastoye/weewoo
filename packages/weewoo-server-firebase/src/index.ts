@@ -1,4 +1,14 @@
-// import { server } from '@toye.io/weewoo-server'
+import { createServer } from '@toye.io/weewoo-server'
+import * as functions from 'firebase-functions'
+
+const server = createServer()
+
+export const myFunctionTest = functions
+  .region('europe-west1')
+  .https.onRequest((req, resp) => {
+    resp.end('ACK')
+  })
+
 // ;(async () => {
 //   console.log('go!')
 //   console.log(
