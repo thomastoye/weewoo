@@ -8,5 +8,7 @@
     { "path": "weewoo-reactors" },
     { "path": "weewoo-location" },
     { "path": "weewoo-geocode" },
+    { "path": "weewoo-decode-lora-packets" },
+    { "path": "weewoo-parse-cloudengine" },
   ]
 }
