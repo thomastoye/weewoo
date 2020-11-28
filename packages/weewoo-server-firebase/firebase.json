@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "predeploy": "echo Deploying functions to Firebase...",
+    "runtime": "nodejs12",
+    "source": "deploy"
+  }
+}

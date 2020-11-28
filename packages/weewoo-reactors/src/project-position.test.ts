@@ -30,7 +30,9 @@ afterEach(async () => {
 
 test('Position projector', async () => {
   const connection = eventStore.connection
-  const server = createServer(connection)
+  const server = createServer(connection, {
+    cloudEnginePreSharedKey: '',
+  })
 
   await server({
     name: 'RenameVehicle',

@@ -30,7 +30,7 @@ export const projectPosition = async (
     {
       stopOnEncounteringEvent: {
         streamId: 'IntegrationTest',
-        eventType: 'EndIntegrationTest',
+        eventType: 'IntegrationTestEnded',
       },
       maxBatchSize: 100,
       maxQueueTimeMs: 200,

@@ -15,6 +15,7 @@
         "test": "jest --passWithNoTests"
     },
     "dependencies": {
-        "@eventstore/db-client": "^0.0.0-alpha.8"
+        "@eventstore/db-client": "^0.0.0-alpha.8",
+        "@toye.io/weewoo-parse-cloudengine": "^0.0.0"
     }
 }

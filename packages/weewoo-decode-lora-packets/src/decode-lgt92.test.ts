@@ -1,4 +1,4 @@
-import { expect } from '@jest/globals'
+import { expect, test } from '@jest/globals'
 import { decodeLGT92Packet } from './decode-lgt92'
 
 test('can decode', () => {

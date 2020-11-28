@@ -151,7 +151,7 @@ export class CloudEnginePacket<T> {
       input.Channel,
       parseIntOrNull(input.FCntUp),
       parseIntOrNull(input.Time),
-      input.DevEUI,
+      input.DevEUI.toUpperCase().replace(/\s/g, ''),
       parseIntOrNull(input.LrrRSSI),
       input.DeviceAddress,
       parseIntOrNull(input.FCntDn),
