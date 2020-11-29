@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@toye.io/weewoo-location": "^0.0.0",
-    "fp-ts": "^2.8.6"
+    "fp-ts": "^2.9.0"
   },
   "scripts": {
     "build": "tsc",

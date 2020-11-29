@@ -89,6 +89,6 @@ export class FakeVehicleLocationService
   }
 }
 
-export const VEHICLE_LOCATION_SERVICE = new InjectionToken<
-  VehicleLocationService
->('vehicle-location')
+export const VEHICLE_LOCATION_SERVICE = new InjectionToken<VehicleLocationService>(
+  'vehicle-location'
+)
