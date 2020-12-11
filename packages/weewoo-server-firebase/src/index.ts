@@ -1,9 +1,9 @@
 import { createServer } from '@toye.io/weewoo-server'
-import { EventStoreConnection } from '@eventstore/db-client'
+import { EventStoreDBClient } from '@eventstore/db-client'
 import * as functions from 'firebase-functions'
 
 class Config {
-  #eventStoreConnection: EventStoreConnection
+  #eventStoreConnection: EventStoreDBClient
   #cloudEnginePsk: string
 
   private constructor(
@@ -12,10 +12,18 @@ class Config {
     esPass: string,
     cloudEnginePsk: string
   ) {
-    this.#eventStoreConnection = EventStoreConnection.builder()
-      .secure()
-      .defaultCredentials({ username: esUser, password: esPass })
-      .singleNodeConnection(esHost)
+    this.#eventStoreConnection = new EventStoreDBClient(
+      {
+        endpoint: esHost,
+      },
+      {
+        insecure: false,
+      },
+      {
+        username: esUser,
+        password: esPass,
+      }
+    )
 
     this.#cloudEnginePsk = cloudEnginePsk
   }
@@ -29,7 +37,7 @@ class Config {
     )
   }
 
-  get eventStoreConnection(): EventStoreConnection {
+  get eventStoreConnection(): EventStoreDBClient {
     return this.#eventStoreConnection
   }
 

@@ -1,8 +1,7 @@
 import {
-  EventStoreConnection,
+  EventStoreDBClient,
   JSONRecordedEvent,
   ResolvedEvent,
-  subscribeToAll,
 } from '@eventstore/db-client'
 import { Firestore } from '@google-cloud/firestore'
 import { BehaviorSubject } from 'rxjs'
@@ -244,7 +243,7 @@ type HandleEvent = (
 ) => Promise<void>
 
 export class EsdbToFirestoreProjector {
-  #connection: EventStoreConnection
+  #connection: EventStoreDBClient
   #stopOnEncounteringEvent: {
     streamId: string
     eventType: string
@@ -259,7 +258,7 @@ export class EsdbToFirestoreProjector {
 
   constructor(
     name: string,
-    connection: EventStoreConnection,
+    connection: EventStoreDBClient,
     firestore: Firestore,
     handleEvent: (
       event: JSONRecordedEvent,
@@ -323,17 +322,15 @@ export class EsdbToFirestoreProjector {
   > {
     const batcher = this.createBatcher()
 
-    const subscription =
-      position == null
-        ? await subscribeToAll()
-            .fromStart()
-            .execute(this.#connection)
-        : await subscribeToAll()
-            .fromPosition({
+    const subscription = await this.#connection.subscribeToAll({
+      fromPosition:
+        position == null
+          ? 'start'
+          : {
               commit: position,
               prepare: position,
-            })
-            .execute(this.#connection)
+            },
+    })
 
     for await (const resolvedEvent of subscription) {
       if (

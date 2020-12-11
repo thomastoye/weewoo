@@ -1,6 +1,6 @@
 import { CommandHandler } from '../command-handler'
 import { commandName } from '../commands/end-integration-test'
-import { EventData } from '@eventstore/db-client'
+import { jsonEvent } from '@eventstore/db-client'
 
 export const endIntegrationTest: CommandHandler = async (command) => {
   if (command.name !== commandName) {
@@ -10,7 +10,7 @@ export const endIntegrationTest: CommandHandler = async (command) => {
     })
   }
 
-  const event = EventData.json('IntegrationTestEnded', {}).build()
+  const event = jsonEvent({ eventType: 'IntegrationTestEnded', payload: {} })
 
   return {
     result: 'accepted',

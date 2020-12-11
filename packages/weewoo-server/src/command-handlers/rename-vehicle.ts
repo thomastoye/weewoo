@@ -1,6 +1,6 @@
 import { CommandHandler } from '../command-handler'
 import { commandName } from '../commands/rename-vehicle'
-import { EventData } from '@eventstore/db-client'
+import { jsonEvent } from '@eventstore/db-client'
 
 export const renameVehicle: CommandHandler = async (command) => {
   if (command.name !== commandName) {
@@ -10,9 +10,12 @@ export const renameVehicle: CommandHandler = async (command) => {
     })
   }
 
-  const event = EventData.json('VehicleRenamed', {
-    name: command.newVehicleName,
-  }).build()
+  const event = jsonEvent({
+    eventType: 'VehicleRenamed',
+    payload: {
+      name: command.newVehicleName,
+    },
+  })
 
   return {
     result: 'accepted',

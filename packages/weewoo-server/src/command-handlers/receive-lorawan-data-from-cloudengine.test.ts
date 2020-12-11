@@ -47,7 +47,7 @@ test('accept packet with correct PSK', async () => {
     expect(handled.events[0].event.eventType).toBe(
       'LGT92MessageReceivedWithLocation'
     )
-    expect(handled.events[0].event.payload.payload).toMatchInlineSnapshot(`
+    expect(handled.events[0].event.payload).toMatchInlineSnapshot(`
       Object {
         "batteryVoltage": 4.03,
         "cloudEngine": Object {

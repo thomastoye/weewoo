@@ -1,7 +1,7 @@
 import spawnAsync from '@expo/spawn-async'
 import getPort from 'get-port'
 import { v4 } from 'uuid'
-import { EventStoreConnection } from '@eventstore/db-client'
+import { EventStoreDBClient } from '@eventstore/db-client'
 import got from 'got'
 import { createDockerCommand } from './helpers/create-docker-command'
 import { logger } from './helpers/logger'
@@ -46,18 +46,22 @@ export const createEventStore = async (): Promise<EventStoreForTesting> => {
 export class EventStoreForTesting {
   #containerName: string
   #port: number
-  #connection: EventStoreConnection | null = null
+  #connection: EventStoreDBClient | null = null
 
   constructor(containerName: string, port: number) {
     this.#containerName = containerName
     this.#port = port
   }
 
-  get connection(): EventStoreConnection {
+  // TODO rename to dbClient
+  get connection(): EventStoreDBClient {
     if (this.#connection == null) {
-      this.#connection = EventStoreConnection.builder()
-        .insecure()
-        .singleNodeConnection(this.url)
+      this.#connection = new EventStoreDBClient(
+        {
+          endpoint: this.url,
+        },
+        { insecure: true }
+      )
     }
 
     return this.#connection
@@ -119,8 +123,8 @@ export class EventStoreForTesting {
 
   async stop(): Promise<void> {
     logger.debug('Stopping EventStore...')
-    await this.connection.close()
-    logger.silly('Closed EventStore connection')
+    // await this.connection.close()
+    // logger.silly('Closed EventStore connection')
     await spawnAsync('docker', ['kill', this.#containerName])
     logger.silly(`Executed docker kill ${this.#containerName}`)
   }

@@ -1,6 +1,6 @@
 import { CommandHandler } from '../command-handler'
 import { commandName } from '../commands/update-vehicle-position'
-import { EventData } from '@eventstore/db-client'
+import { jsonEvent } from '@eventstore/db-client'
 
 export const updateVehiclePosition: CommandHandler = async (command) => {
   if (command.name !== commandName) {
@@ -10,13 +10,16 @@ export const updateVehiclePosition: CommandHandler = async (command) => {
     })
   }
 
-  const event = EventData.json('VehicleMoved', {
-    position: {
-      lat: command.position.lat,
-      lon: command.position.lon,
+  const event = jsonEvent({
+    eventType: 'VehicleMoved',
+    payload: {
+      position: {
+        lat: command.position.lat,
+        lon: command.position.lon,
+      },
+      positionAtTime: command.positionAtTime,
     },
-    positionAtTime: command.positionAtTime,
-  }).build()
+  })
 
   return {
     result: 'accepted',

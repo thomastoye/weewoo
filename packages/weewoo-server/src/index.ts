@@ -1,8 +1,4 @@
-import {
-  EventData,
-  EventStoreConnection,
-  writeEventsToStream,
-} from '@eventstore/db-client'
+import { EventStoreDBClient, jsonEvent } from '@eventstore/db-client'
 import { CommandHandler } from './command-handler'
 import { endIntegrationTest } from './command-handlers/end-integration-test'
 import { renameVehicle } from './command-handlers/rename-vehicle'
@@ -20,15 +16,17 @@ export type ServerConfig = {
 }
 
 const registerRejectedCommand = async (
-  connection: EventStoreConnection,
+  connection: EventStoreDBClient,
   command: Command,
   rejection: CommandRejectedResult,
   initialResult?: CommandAcceptedResult
 ): Promise<void> => {
   try {
-    await writeEventsToStream('RejectedCommand')
-      .send(
-        EventData.json('CommandRejected', {
+    await connection.writeEventsToStream(
+      'RejectedCommand',
+      jsonEvent({
+        eventType: 'CommandRejected',
+        payload: {
           command,
           rejection: {
             reason: rejection.reason,
@@ -43,13 +41,12 @@ const registerRejectedCommand = async (
               : undefined,
           },
           initialResult,
-        })
-          .jsonMetadata({
-            timestamp: new Date().getTime(),
-          })
-          .build()
-      )
-      .execute(connection)
+        },
+        metadata: {
+          timestamp: new Date().getTime(),
+        },
+      })
+    )
   } catch (err) {
     // Persisting rejected commands on a best effort basis
     console.log('Could not register rejected command.', command)
@@ -84,7 +81,7 @@ const getEvents = async (
 }
 
 export const createServer: (
-  connection: EventStoreConnection,
+  connection: EventStoreDBClient,
   config: ServerConfig
 ) => CommandHandler = (connection, config) => async (command) => {
   const commandResult = await getEvents(command, config)
@@ -96,12 +93,11 @@ export const createServer: (
 
   try {
     await Promise.all(
-      commandResult.events.map((event) =>
-        writeEventsToStream(event.stream)
-          .send(event.event)
-          .expectedRevision(event.expectedRevision)
-          .execute(connection)
-      )
+      commandResult.events.map((event) => {
+        return connection.writeEventsToStream(event.stream, event.event, {
+          expectedRevision: event.expectedRevision,
+        })
+      })
     )
 
     return commandResult

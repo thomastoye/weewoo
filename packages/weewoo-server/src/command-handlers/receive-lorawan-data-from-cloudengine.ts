@@ -1,6 +1,6 @@
 import { CommandHandler } from '../command-handler'
 import { commandName } from '../commands/receive-lorawan-data-from-cloudengine'
-import { EventData } from '@eventstore/db-client'
+import { jsonEvent } from '@eventstore/db-client'
 import { CloudEnginePacket } from '@toye.io/weewoo-parse-cloudengine'
 
 type ReceiveLoraWANDataFromCloudEngineConfig = {
@@ -34,38 +34,41 @@ export const receiveLoraWANDataFromCloudEngine = (
   }
 
   if (packet.payload.location != null) {
-    const event = EventData.json('LGT92MessageReceivedWithLocation', {
-      locationWGS84: {
-        lat: packet.payload.location.WGS84.lat,
-        lng: packet.payload.location.WGS84.lon,
+    const event = jsonEvent({
+      eventType: 'LGT92MessageReceivedWithLocation',
+      payload: {
+        locationWGS84: {
+          lat: packet.payload.location.WGS84.lat,
+          lng: packet.payload.location.WGS84.lon,
+        },
+        batteryVoltage: packet.payload.batteryVoltage,
+        isInAlarmState: packet.payload.isInAlarmState,
+        motionDetectionMode: packet.payload.motionDetectionMode,
+        isLedOnForTransmissionIndications:
+          packet.payload.isLedOnForTransmissionIndications,
+        lora: {
+          applicationPort: packet.applicationPort,
+          baseStationId: packet.baseStationId,
+          baseStationRSSI: packet.baseStationRSSI,
+          baseStationSRN: packet.baseStationSNR,
+          channel: packet.channel,
+          devEUI: packet.devEUI,
+          deviceAddress: packet.deviceAddress,
+          fCntUp: packet.fCntUp,
+          fCntDn: packet.fCntDn,
+          numberOfBaseStations: packet.numberOfBaseStations,
+          receivedAtMs: packet.receivedAtMs,
+          spreadingFactor: packet.spreadingFactor,
+          subBand: packet.subBand,
+        },
+        cloudEngine: {
+          allTags: packet.allTags,
+          asset: packet.cloudEngineAsset,
+          deviceName: packet.deviceName,
+          deviceTags: packet.deviceTags,
+        },
       },
-      batteryVoltage: packet.payload.batteryVoltage,
-      isInAlarmState: packet.payload.isInAlarmState,
-      motionDetectionMode: packet.payload.motionDetectionMode,
-      isLedOnForTransmissionIndications:
-        packet.payload.isLedOnForTransmissionIndications,
-      lora: {
-        applicationPort: packet.applicationPort,
-        baseStationId: packet.baseStationId,
-        baseStationRSSI: packet.baseStationRSSI,
-        baseStationSRN: packet.baseStationSNR,
-        channel: packet.channel,
-        devEUI: packet.devEUI,
-        deviceAddress: packet.deviceAddress,
-        fCntUp: packet.fCntUp,
-        fCntDn: packet.fCntDn,
-        numberOfBaseStations: packet.numberOfBaseStations,
-        receivedAtMs: packet.receivedAtMs,
-        spreadingFactor: packet.spreadingFactor,
-        subBand: packet.subBand,
-      },
-      cloudEngine: {
-        allTags: packet.allTags,
-        asset: packet.cloudEngineAsset,
-        deviceName: packet.deviceName,
-        deviceTags: packet.deviceTags,
-      },
-    }).build()
+    })
 
     return {
       result: 'accepted',
@@ -78,34 +81,37 @@ export const receiveLoraWANDataFromCloudEngine = (
       ],
     }
   } else {
-    const event = EventData.json('LGT92MessageReceivedWithoutLocation', {
-      batteryVoltage: packet.payload.batteryVoltage,
-      isInAlarmState: packet.payload.isInAlarmState,
-      motionDetectionMode: packet.payload.motionDetectionMode,
-      isLedOnForTransmissionIndications:
-        packet.payload.isLedOnForTransmissionIndications,
-      lora: {
-        applicationPort: packet.applicationPort,
-        baseStationId: packet.baseStationId,
-        baseStationRSSI: packet.baseStationRSSI,
-        baseStationSRN: packet.baseStationSNR,
-        channel: packet.channel,
-        devEUI: packet.devEUI,
-        deviceAddress: packet.deviceAddress,
-        fCntUp: packet.fCntUp,
-        fCntDn: packet.fCntDn,
-        numberOfBaseStations: packet.numberOfBaseStations,
-        receivedAtMs: packet.receivedAtMs,
-        spreadingFactor: packet.spreadingFactor,
-        subBand: packet.subBand,
+    const event = jsonEvent({
+      eventType: 'LGT92MessageReceivedWithoutLocation',
+      payload: {
+        batteryVoltage: packet.payload.batteryVoltage,
+        isInAlarmState: packet.payload.isInAlarmState,
+        motionDetectionMode: packet.payload.motionDetectionMode,
+        isLedOnForTransmissionIndications:
+          packet.payload.isLedOnForTransmissionIndications,
+        lora: {
+          applicationPort: packet.applicationPort,
+          baseStationId: packet.baseStationId,
+          baseStationRSSI: packet.baseStationRSSI,
+          baseStationSRN: packet.baseStationSNR,
+          channel: packet.channel,
+          devEUI: packet.devEUI,
+          deviceAddress: packet.deviceAddress,
+          fCntUp: packet.fCntUp,
+          fCntDn: packet.fCntDn,
+          numberOfBaseStations: packet.numberOfBaseStations,
+          receivedAtMs: packet.receivedAtMs,
+          spreadingFactor: packet.spreadingFactor,
+          subBand: packet.subBand,
+        },
+        cloudEngine: {
+          allTags: packet.allTags,
+          asset: packet.cloudEngineAsset,
+          deviceName: packet.deviceName,
+          deviceTags: packet.deviceTags,
+        },
       },
-      cloudEngine: {
-        allTags: packet.allTags,
-        asset: packet.cloudEngineAsset,
-        deviceName: packet.deviceName,
-        deviceTags: packet.deviceTags,
-      },
-    }).build()
+    })
 
     return {
       result: 'accepted',
