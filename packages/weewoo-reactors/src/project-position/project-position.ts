@@ -1,6 +1,6 @@
 import { EventStoreConnection, JSONRecordedEvent } from '@eventstore/db-client'
 import { Firestore } from '@google-cloud/firestore'
-import { EsdbToFirestoreProjector } from './eventstoredb-to-firestore-projector'
+import { EsdbToFirestoreProjector } from '../eventstoredb-to-firestore-projector'
 
 export const projectPosition = async (
   connection: EventStoreConnection,
