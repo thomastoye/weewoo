@@ -1,6 +1,6 @@
 import { EventStoreDBClient, JSONRecordedEvent } from '@eventstore/db-client'
 import { Firestore } from '@google-cloud/firestore'
-import { EsdbToFirestoreProjector } from '../eventstoredb-to-firestore-projector'
+import { EsdbToFirestoreProjector } from '../../eventstoredb-to-firestore-projector'
 
 export const projectPosition = async (
   connection: EventStoreDBClient,
@@ -33,7 +33,7 @@ export const projectPosition = async (
         eventType: 'IntegrationTestEnded',
       },
       maxBatchSize: 100,
-      maxQueueTimeMs: 200,
+      maxQueueTimeMs: 2000,
     }
   )
 

@@ -6,10 +6,10 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatListModule } from '@angular/material/list'
 import { MatSidenavModule } from '@angular/material/sidenav'
 import { MatToolbarModule } from '@angular/material/toolbar'
-
 import { NavigationComponent } from './navigation.component'
 import { AUTH_SERVICE, MockAuthService } from '../services/auth.service'
 import { MatSnackBarModule } from '@angular/material/snack-bar'
+import { RouterTestingModule } from '@angular/router/testing'
 
 describe('NavigationComponent', () => {
   let component: NavigationComponent
@@ -21,6 +21,7 @@ describe('NavigationComponent', () => {
         declarations: [NavigationComponent],
         imports: [
           NoopAnimationsModule,
+          RouterTestingModule,
           LayoutModule,
           MatButtonModule,
           MatIconModule,

@@ -7,7 +7,9 @@
     "@toye.io/weewoo-integration-test-utils": "^0.0.0",
     "@toye.io/weewoo-server": "^0.0.0",
     "@types/jest": "^26.0.19",
+    "@types/streamtest": "^1.2.0",
     "jest": "^26.6.3",
+    "streamtest": "^2.0.0",
     "ts-jest": "^26.4.4",
     "ts-node": "^9.1.1",
     "typescript": "^4.1.2"
@@ -22,7 +24,7 @@
     "delay": "^4.4.0",
     "p-retry": "^4.2.0",
     "p-series": "^2.1.0",
-    "rxjs": "^6.6.3",
+    "ts-custom-error": "^3.2.0",
     "tslog": "^3.0.1"
   }
 }
