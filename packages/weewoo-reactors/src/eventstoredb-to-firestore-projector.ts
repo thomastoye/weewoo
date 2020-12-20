@@ -150,7 +150,6 @@ export class EsdbToFirestoreProjector {
       readable,
       new Transform({
         objectMode: true,
-        // highWaterMark: 200,
         transform(ev: AllStreamResolvedEvent, enc, callback) {
           if (
             ev.event != null &&
@@ -183,28 +182,6 @@ export class EsdbToFirestoreProjector {
               .map((ev) => ev.commitPosition)
               .filter((pos) => pos != null) as bigint[]
           )
-
-          // pSeries(
-          //   batch.map((ev) => () =>
-          //     pRetry(
-          //       () =>
-          //         handleEvent(
-          //           ev.event as AllStreamJSONRecordedEvent,
-          //           writeBatch
-          //         ),
-          //       {
-          //         retries: 3,
-          //         maxTimeout: 1000,
-          //         randomize: true,
-          //         onFailedAttempt: (err) => {
-          //           logger.warn(
-          //             `Could not perform side effect for event at commit offset ${ev.commitPosition}. Attempt ${err.attemptNumber}, ${err.retriesLeft} retries left. Error: ${err.message}`
-          //           )
-          //         },
-          //       }
-          //     )
-          //   )
-          // )
 
           Promise.all(
             batch.map((ev) =>
