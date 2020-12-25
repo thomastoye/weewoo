@@ -125,7 +125,11 @@ export class EventStoreForTesting {
     logger.debug('Stopping EventStore...')
     // await this.connection.close()
     // logger.silly('Closed EventStore connection')
-    await spawnAsync('docker', ['kill', this.#containerName])
-    logger.silly(`Executed docker kill ${this.#containerName}`)
+    await spawnAsync('docker', [
+      'kill',
+      '--signal=SIGKILL',
+      this.#containerName,
+    ])
+    logger.silly(`Executed docker kill --signal=SIGKILL ${this.#containerName}`)
   }
 }
