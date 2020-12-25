@@ -4,6 +4,7 @@ import {
   JSONRecordedEvent,
 } from '@eventstore/db-client'
 import { Transform } from 'stream'
+import { Logger } from 'tslog'
 
 const maxBigint = (arr: readonly bigint[]): bigint =>
   arr.reduce((highest, curr) => (highest > curr ? highest : curr), arr[0])
@@ -13,8 +14,11 @@ export const performSideEffectsTransform = (
     event: JSONRecordedEvent,
     batch: FirebaseFirestore.WriteBatch
   ) => Promise<void>,
-  projectorPositionDoc: FirebaseFirestore.DocumentReference,
-  createWriteBatch: () => FirebaseFirestore.WriteBatch
+  projectorPositionDoc: FirebaseFirestore.DocumentReference<{
+    commitPosition: string
+  }>,
+  createWriteBatch: () => FirebaseFirestore.WriteBatch,
+  logger: Logger
 ): Transform =>
   new Transform({
     objectMode: true,
@@ -34,7 +38,7 @@ export const performSideEffectsTransform = (
       )
         .then(() => {
           writeBatch.set(projectorPositionDoc, {
-            commitPosition: highestCommitPosition,
+            commitPosition: highestCommitPosition.toString(10),
           })
         })
         .then(() =>
@@ -44,5 +48,9 @@ export const performSideEffectsTransform = (
           })
         )
         .catch((err) => callback(err))
+    },
+    destroy(err, cb) {
+      logger.debug('Destroying performSideEffectsTransform...')
+      cb(err)
     },
   })

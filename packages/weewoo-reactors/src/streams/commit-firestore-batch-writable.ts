@@ -26,4 +26,8 @@ export const commitFirestoreBatchWritable = (logger: Logger): Writable =>
         })
         .catch((err) => callback(err))
     },
+    destroy(err, cb) {
+      logger.debug('Destroying commitFirestoreBatchWritable...')
+      cb(err)
+    },
   })

@@ -109,7 +109,8 @@ test('Position projector', async () => {
     name: 'EndIntegrationTest',
   })
 
-  await projectPosition(connection, firestore.connection)
+  const projector = await projectPosition(connection, firestore.connection)
+  await projector.start()
 
   expect(await firestore.dumpCollection('position')).toMatchInlineSnapshot(`
     Object {

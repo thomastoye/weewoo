@@ -5,7 +5,7 @@ import { EsdbToFirestoreProjector } from '../../eventstoredb-to-firestore-projec
 export const projectPosition = async (
   connection: EventStoreDBClient,
   firestore: Firestore
-): Promise<void> => {
+): Promise<EsdbToFirestoreProjector> => {
   const handleEvent = async (
     event: JSONRecordedEvent,
     batch: FirebaseFirestore.WriteBatch
@@ -37,5 +37,5 @@ export const projectPosition = async (
     }
   )
 
-  return projector.start()
+  return projector
 }

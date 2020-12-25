@@ -57,6 +57,7 @@ export class BatchWithTimeoutTransform extends Transform {
       | 'max queue time exceeded'
       | 'max batch buffer size reached'
       | 'transform stream _flush called'
+      | 'transform stream _destroy called'
   ): void {
     this.#logger?.debug(
       `Was asked to flush batch buffer due to ${reason}. Timeout handle is ${
@@ -82,5 +83,11 @@ export class BatchWithTimeoutTransform extends Transform {
   _flush(callback: (error?: Error | null, data?: unknown) => void): void {
     this._flushBatchBuffer('transform stream _flush called')
     callback()
+  }
+
+  _destroy(error: Error | null, callback: (error: Error | null) => void): void {
+    this.#logger?.debug('Destroying BatchWithTimeoutTransform...')
+    this._flushBatchBuffer('transform stream _destroy called')
+    callback(error)
   }
 }

@@ -17,8 +17,15 @@ import { createFilterTransform } from './streams/filter-transform'
 import { commitFirestoreBatchWritable } from './streams/commit-firestore-batch-writable'
 import { performSideEffectsTransform } from './streams/perform-side-effects-transform'
 import delay from 'delay'
+import { CustomError } from 'ts-custom-error'
 
 const pipelineAsync = promisify(pipeline)
+
+export class ProjectorStoppedError extends CustomError {
+  public constructor() {
+    super()
+  }
+}
 
 export type ProjectorOptions = {
   /* Stop the projector when an event of this type is received on the specified stream */
@@ -52,6 +59,7 @@ export class EsdbToFirestoreProjector {
   #maxBatchSize: number
   #maxQueueTimeMs: number
   #projectorName: string
+  #stopFun: (() => void) | null = null
 
   constructor(
     name: string,
@@ -110,6 +118,8 @@ export class EsdbToFirestoreProjector {
       }
     | { status: 'success'; reason: string }
   > {
+    this.#logger.debug(`Starting after commit position ${position}`)
+
     const subscription = await this.#connection.subscribeToAll({
       fromPosition:
         position == null
@@ -123,6 +133,8 @@ export class EsdbToFirestoreProjector {
     const readable = Readable.from(subscription, {
       highWaterMark: this.#maxBatchSize * 5,
     })
+
+    this.#stopFun = () => readable.destroy(new ProjectorStoppedError())
 
     const isTerminalEvent = (resolvedEvent: ResolvedEvent): boolean => {
       return (
@@ -139,7 +151,8 @@ export class EsdbToFirestoreProjector {
         readable,
         createFilterTransform<AllStreamResolvedEvent>(
           (ev) =>
-            ev.event != null && ev.event.isJson && ev.commitPosition != null
+            ev.event != null && ev.event.isJson && ev.commitPosition != null,
+          this.#logger
         ),
         destroyReadableOnTerminalEventTransform(
           isTerminalEvent,
@@ -154,15 +167,24 @@ export class EsdbToFirestoreProjector {
         performSideEffectsTransform(
           this.#handleEvent,
           this.projectorDocument,
-          () => this.#firestore.batch()
+          () => this.#firestore.batch(),
+          this.#logger
         ),
         commitFirestoreBatchWritable(this.#logger),
       ])
     } catch (err) {
+      subscription.unsubscribe()
       if (err instanceof TerminalEventReceivedError) {
         return {
           status: 'success',
           reason: 'terminal event received',
+        }
+      }
+
+      if (err instanceof ProjectorStoppedError) {
+        return {
+          status: 'success',
+          reason: 'projector stopped',
         }
       }
 
@@ -172,9 +194,21 @@ export class EsdbToFirestoreProjector {
       }
     }
 
-    this.#logger.debug('Done with pipeline')
-
+    subscription.unsubscribe()
     return { status: 'success', reason: 'end of stream' }
+  }
+
+  async stop(): Promise<void> {
+    if (this.#stopFun == null) {
+      this.#logger.warn('Tried to stop projector that was not running')
+    } else {
+      this.#stopFun()
+      this.#stopFun = null
+    }
+  }
+
+  get projectorName(): string {
+    return this.#projectorName
   }
 
   async getLastSuccessfulCommitPosition(): Promise<bigint | null> {

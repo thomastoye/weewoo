@@ -6,8 +6,10 @@
     "@google-cloud/firestore": "^4.8.1",
     "@toye.io/weewoo-integration-test-utils": "^0.0.0",
     "@toye.io/weewoo-server": "^0.0.0",
+    "@types/inquirer": "^7.3.1",
     "@types/jest": "^26.0.19",
     "@types/streamtest": "^1.2.0",
+    "inquirer": "^7.3.3",
     "jest": "^26.6.3",
     "streamtest": "^2.0.0",
     "ts-jest": "^26.4.4",
@@ -17,7 +19,8 @@
   "scripts": {
     "build": "tsc",
     "start": "ts-node src/index.ts",
-    "test": "jest"
+    "test": "jest",
+    "start:local": "firebase emulators:exec 'yarn ts-node src/run-against-firestore-emulator.ts' --project=123  --only=firestore --ui"
   },
   "dependencies": {
     "@eventstore/db-client": "^0.0.0-alpha.9",

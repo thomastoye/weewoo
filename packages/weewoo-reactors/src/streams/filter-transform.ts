@@ -1,7 +1,9 @@
 import { Transform } from 'stream'
+import { Logger } from 'tslog'
 
 export const createFilterTransform = <T>(
-  filterFun: (chunk: T) => boolean
+  filterFun: (chunk: T) => boolean,
+  logger?: Logger
 ): Transform =>
   new Transform({
     objectMode: true,
@@ -11,5 +13,9 @@ export const createFilterTransform = <T>(
       } else {
         callback()
       }
+    },
+    destroy(err, cb) {
+      logger?.debug('Destroying createFilterTransform...')
+      cb(err)
     },
   })

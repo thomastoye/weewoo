@@ -31,4 +31,8 @@ export const destroyReadableOnTerminalEventTransform = <T>(
         callback(null, ev)
       }
     },
+    destroy(err, cb) {
+      logger?.debug('Destroying destroyReadableOnTerminalEventTransform...')
+      cb(err)
+    },
   })
