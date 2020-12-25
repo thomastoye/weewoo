@@ -1,5 +1,4 @@
 import {
-  AllStreamJSONRecordedEvent,
   AllStreamResolvedEvent,
   EventStoreDBClient,
   JSONRecordedEvent,
@@ -7,20 +6,19 @@ import {
 } from '@eventstore/db-client'
 import { Firestore } from '@google-cloud/firestore'
 import { Logger } from 'tslog'
-import { Readable, pipeline, Transform, Writable } from 'stream'
+import { Readable, pipeline } from 'stream'
 import { promisify } from 'util'
 import { BatchWithTimeoutTransform } from './streams/batch-with-timeout-stream-transform'
 import {
   destroyReadableOnTerminalEventTransform,
   TerminalEventReceivedError,
 } from './streams/destroy-on-terminal-event-transform'
-// import pRetry from 'p-retry'
-// import pSeries from 'p-series'
+import { createFilterTransform } from './streams/filter-transform'
+import { commitFirestoreBatchWritable } from './streams/commit-firestore-batch-writable'
+import { performSideEffectsTransform } from './streams/perform-side-effects-transform'
+import delay from 'delay'
 
 const pipelineAsync = promisify(pipeline)
-
-const maxBigint = (arr: readonly bigint[]): bigint =>
-  arr.reduce((highest, curr) => (highest > curr ? highest : curr), arr[0])
 
 export type ProjectorOptions = {
   /* Stop the projector when an event of this type is received on the specified stream */
@@ -84,24 +82,21 @@ export class EsdbToFirestoreProjector {
       const startAfterCommitPosition:
         | bigint
         | null = await this.getLastSuccessfulCommitPosition()
-      const startAfter:
-        | {
-            status: 'error'
-            lastSuccessfulCommitPosition: bigint | null
-            error: Error
-          }
-        | {
-            status: 'success'
-          } = await this.startAfterCommitPosition(startAfterCommitPosition)
+      const projectorResult = await this.startAfterCommitPosition(
+        startAfterCommitPosition
+      )
 
-      if (startAfter.status !== 'error') {
-        this.#logger.debug(`Projector done successfully`)
+      if (projectorResult.status !== 'error') {
+        this.#logger.info(`Projector done successfully!`)
         return
       } else {
+        const randomDelay = Math.round(Math.random() * 1000 * 5)
         this.#logger.warn(
-          `Projector hit a snag, restarting. Last successful commit position was ${startAfter.lastSuccessfulCommitPosition}. Error was`,
-          startAfter.error
+          `Projector hit a snag, restarting in ${randomDelay}ms. Error was`,
+          projectorResult.error
         )
+
+        await delay(randomDelay)
       }
     }
   }
@@ -111,7 +106,6 @@ export class EsdbToFirestoreProjector {
   ): Promise<
     | {
         status: 'error'
-        lastSuccessfulCommitPosition: null | bigint
         error: Error
       }
     | { status: 'success'; reason: string }
@@ -139,97 +133,71 @@ export class EsdbToFirestoreProjector {
           this.#stopOnEncounteringEvent.eventType
       )
     }
-    const firestore = this.#firestore
-    const logger = this.#logger
-    const projectorPositionDoc = this.#firestore
-      .collection('projector')
-      .doc(this.#projectorName)
-    const handleEvent = this.#handleEvent
 
-    await pipelineAsync([
-      readable,
-      new Transform({
-        objectMode: true,
-        transform(ev: AllStreamResolvedEvent, enc, callback) {
-          if (
-            ev.event != null &&
-            ev.event.isJson &&
-            ev.commitPosition != null
-          ) {
-            callback(null, ev)
-          } else {
-            callback()
-          }
-        },
-      }),
-      destroyReadableOnTerminalEventTransform(
-        isTerminalEvent,
+    try {
+      await pipelineAsync([
         readable,
-        this.#logger
-      ),
-      new BatchWithTimeoutTransform(
-        this.#maxBatchSize,
-        this.#maxQueueTimeMs,
-        this.#logger
-      ),
-      new Writable({
-        objectMode: true,
-        highWaterMark: 30,
-        write(batch: readonly AllStreamResolvedEvent[], enc, callback) {
-          const writeBatch = firestore.batch()
-          const highestCommitOffset = maxBigint(
-            batch
-              .map((ev) => ev.commitPosition)
-              .filter((pos) => pos != null) as bigint[]
-          )
-
-          Promise.all(
-            batch.map((ev) =>
-              handleEvent(ev.event as AllStreamJSONRecordedEvent, writeBatch)
-            )
-          )
-            .then(() => {
-              writeBatch.set(projectorPositionDoc, {
-                commitPosition: highestCommitOffset,
-              })
-            })
-            .then(() => writeBatch.commit())
-            .then(() => {
-              logger.info(
-                `Writeable committed! Commit offset: ${highestCommitOffset}.`
-              )
-              callback()
-            })
-            .catch((err) => callback(err))
-        },
-      }),
-    ]).catch((err) => {
-      if (!(err instanceof TerminalEventReceivedError)) {
-        throw err
+        createFilterTransform<AllStreamResolvedEvent>(
+          (ev) =>
+            ev.event != null && ev.event.isJson && ev.commitPosition != null
+        ),
+        destroyReadableOnTerminalEventTransform(
+          isTerminalEvent,
+          readable,
+          this.#logger
+        ),
+        new BatchWithTimeoutTransform(
+          this.#maxBatchSize,
+          this.#maxQueueTimeMs,
+          this.#logger
+        ),
+        performSideEffectsTransform(
+          this.#handleEvent,
+          this.projectorDocument,
+          () => this.#firestore.batch()
+        ),
+        commitFirestoreBatchWritable(this.#logger),
+      ])
+    } catch (err) {
+      if (err instanceof TerminalEventReceivedError) {
+        return {
+          status: 'success',
+          reason: 'terminal event received',
+        }
       }
-    })
 
-    logger.debug('Done with pipeline')
+      return {
+        status: 'error',
+        error: err,
+      }
+    }
+
+    this.#logger.debug('Done with pipeline')
 
     return { status: 'success', reason: 'end of stream' }
   }
 
   async getLastSuccessfulCommitPosition(): Promise<bigint | null> {
-    const doc = await this.#firestore
-      .collection('projector')
-      .doc(this.#projectorName)
-      .get()
+    const doc = await this.projectorDocument.get()
 
     if (doc == null || !doc.exists) {
       return null
     }
 
-    const data = doc.data()
-
-    if (data == null) {
+    try {
+      return BigInt(doc.data()?.commitPosition)
+    } catch (err) {
       return null
     }
+  }
 
-    return data.commitPosition || null
+  private get projectorDocument(): FirebaseFirestore.DocumentReference<{
+    commitPosition: string
+  }> {
+    return this.#firestore
+      .collection('projector')
+      .doc(this.#projectorName) as FirebaseFirestore.DocumentReference<{
+      commitPosition: string
+    }>
   }
 }
