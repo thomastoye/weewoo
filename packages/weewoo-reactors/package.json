@@ -26,6 +26,6 @@
     "@eventstore/db-client": "^0.0.0-alpha.11",
     "delay": "^4.4.0",
     "ts-custom-error": "^3.2.0",
-    "tslog": "^3.0.2"
+    "tslog": "^3.0.3"
   }
 }

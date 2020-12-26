@@ -21,7 +21,7 @@
         "@expo/spawn-async": "^1.5.0",
         "@google-cloud/firestore": "^4.8.1",
         "get-port": "^5.1.1",
-        "tslog": "^3.0.2",
+        "tslog": "^3.0.3",
         "uuid": "^8.3.2"
     }
 }
