@@ -120,7 +120,7 @@ export class EsdbToFirestoreProjector {
   > {
     this.#logger.debug(`Starting after commit position ${position}`)
 
-    const subscription = await this.#connection.subscribeToAll({
+    const subscription = this.#connection.subscribeToAll({
       fromPosition:
         position == null
           ? 'start'
