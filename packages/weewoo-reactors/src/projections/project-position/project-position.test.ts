@@ -19,13 +19,8 @@ beforeEach(async () => {
 })
 
 afterEach(async () => {
-  if (eventStore != null) {
-    await eventStore.stop()
-  }
-
-  if (firestore != null) {
-    await firestore.stop()
-  }
+  await eventStore?.stop()
+  await firestore?.stop()
 })
 
 test('Position projector', async () => {
