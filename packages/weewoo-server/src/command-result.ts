@@ -1,4 +1,4 @@
-import { EventData, WriteEventsExpectedRevision } from '@eventstore/db-client'
+import { EventData, AppendExpectedRevision } from '@eventstore/db-client'
 
 export type CommandRejectedResult = {
   result: 'rejected'
@@ -11,7 +11,7 @@ export type CommandAcceptedResult = {
   events: readonly {
     event: EventData
     stream: string
-    expectedRevision: WriteEventsExpectedRevision
+    expectedRevision: AppendExpectedRevision
   }[]
 }
 

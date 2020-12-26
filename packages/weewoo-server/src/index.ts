@@ -22,7 +22,7 @@ const registerRejectedCommand = async (
   initialResult?: CommandAcceptedResult
 ): Promise<void> => {
   try {
-    await connection.writeEventsToStream(
+    await connection.appendToStream(
       'RejectedCommand',
       jsonEvent({
         eventType: 'CommandRejected',
@@ -94,7 +94,7 @@ export const createServer: (
   try {
     await Promise.all(
       commandResult.events.map((event) => {
-        return connection.writeEventsToStream(event.stream, event.event, {
+        return connection.appendToStream(event.stream, event.event, {
           expectedRevision: event.expectedRevision,
         })
       })

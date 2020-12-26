@@ -1307,12 +1307,14 @@
     minimatch "^3.0.4"
     strip-json-comments "^3.1.1"
 
-"@eventstore/db-client@^0.0.0-alpha.9":
-  version "0.0.0-alpha.9"
-  resolved "https://registry.yarnpkg.com/@eventstore/db-client/-/db-client-0.0.0-alpha.9.tgz#3398f2b58921d2db1190eabbe0c25d1c587d46d8"
-  integrity sha512-qM/cXGPLN4b8WdbZvbvzfiYd9j5xj+neNQ4LtCHiioHUSplulTKTAx5UfstOHnJirxhD0FPhDOa4QgUD+LN6kg==
+"@eventstore/db-client@^0.0.0-alpha.11":
+  version "0.0.0-alpha.11"
+  resolved "https://registry.yarnpkg.com/@eventstore/db-client/-/db-client-0.0.0-alpha.11.tgz#ff8e4f234d8222de4bf145e86f71f5aa8484b2b1"
+  integrity sha512-lv+PpwymZN+zAxqjVcTDc519o9kepF7+f+1kiZeKF1/HbPuxwlD+tQLyX/tukOC+feG6ZOnLOG5q1vKP3RaRug==
   dependencies:
     "@grpc/grpc-js" "^1.1.5"
+    "@types/debug" "^4.1.5"
+    "@types/node" "^12.12.47"
     debug "^4.2.0"
     google-protobuf "^3.13.0"
     uuid "^8.2.0"
@@ -3076,6 +3078,11 @@
   integrity sha512-2+FrkXY4zllzTNfJth7jOqEHC+enpLeGslEhpnTAkg21GkRrWV4SsAtqchtT4YS9/nODBU2/ZfsBY2X4J/dX7A==
   dependencies:
     "@types/node" "*"
+
+"@types/debug@^4.1.5":
+  version "4.1.5"
+  resolved "https://registry.yarnpkg.com/@types/debug/-/debug-4.1.5.tgz#b14efa8852b7768d898906613c23f688713e02cd"
+  integrity sha512-Q1y515GcOdTHgagaVFhHnIFQ38ygs/kmxdNpvpou+raI9UO3YZcHDngBSYKQklcKlvA7iuQlmIKbzvmxcOE9CQ==
 
 "@types/duplexify@^3.6.0":
   version "3.6.0"
