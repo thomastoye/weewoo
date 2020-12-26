@@ -7,9 +7,5 @@
   "extends": "../../tsconfig.json",
   "include": [
     "src/**/*"
-  ],
-  "references": [
-    { "path": "../weewoo-parse-cloudengine" },
-    { "path": "../weewoo-event-definitions" },
   ]
 }

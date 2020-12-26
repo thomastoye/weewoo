@@ -78,6 +78,8 @@ export class EsdbToFirestoreProjector {
     this.#firestore = firestore
   }
 
+  // TODO if (re)starting from zero, need to delete everything in the Firestore collection first. Some kind of clean() method?
+
   async start(): Promise<void> {
     if (this.#started) {
       throw new Error('Projection was already started')

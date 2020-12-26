@@ -10,5 +10,6 @@
     { "path": "weewoo-geocode" },
     { "path": "weewoo-decode-lora-packets" },
     { "path": "weewoo-parse-cloudengine" },
+    { "path": "weewoo-event-definitions" },
   ]
 }

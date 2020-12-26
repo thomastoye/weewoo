@@ -11,5 +11,6 @@
   "references": [
     { "path": "../weewoo-integration-test-utils" },
     { "path": "../weewoo-server" },
+    { "path": "../weewoo-event-definitions" },
   ]
 }

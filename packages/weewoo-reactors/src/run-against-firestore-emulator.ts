@@ -3,6 +3,7 @@ import { EventStoreDBClient, JSONRecordedEvent } from '@eventstore/db-client'
 import inquirer from 'inquirer'
 import { EsdbToFirestoreProjector } from './eventstoredb-to-firestore-projector'
 import { execSync } from 'child_process'
+import { WeewooEvent } from '@toye.io/weewoo-event-definitions'
 
 export const createProjector = async (
   connection: EventStoreDBClient,
@@ -13,15 +14,45 @@ export const createProjector = async (
     batch: FirebaseFirestore.WriteBatch
   ) => {
     if (
-      event.eventType !== 'LGT92MessageReceivedWithLocation' ||
+      ![
+        'LGT92MessageReceivedWithLocation',
+        'LGT92MessageReceivedWithoutLocation',
+      ].includes(event.eventType) ||
       !event.streamId.startsWith('LGT92-')
     ) {
       return
     }
 
-    batch.set(firestore.collection('position').doc(event.streamId), {
-      lastKnownPosition: (event.data as any).locationWGS84,
-    })
+    const data = event.data as
+      | WeewooEvent['LGT92MessageReceivedWithLocation']
+      | WeewooEvent['LGT92MessageReceivedWithoutLocation']
+
+    batch.set(
+      firestore.collection('lora-device-information').doc(event.streamId),
+      {
+        batteryVoltage: data.batteryVoltage,
+        isInAlarmState: data.isInAlarmState,
+        lastReceivedAt: data.lora.receivedAtMs,
+        lastRRSI: data.lora.baseStationRSSI,
+      },
+      { merge: true }
+    )
+
+    if (event.eventType === 'LGT92MessageReceivedWithLocation') {
+      const locationPayload = event.data as WeewooEvent['LGT92MessageReceivedWithLocation']
+
+      batch.set(
+        firestore.collection('lora-device-information').doc(event.streamId),
+        {
+          locationWGS84: {
+            receivedAt: locationPayload.lora.receivedAtMs,
+            lat: locationPayload.locationWGS84.lat,
+            lng: locationPayload.locationWGS84.lng,
+          },
+        },
+        { merge: true }
+      )
+    }
   }
 
   const projector = new EsdbToFirestoreProjector(
@@ -78,14 +109,15 @@ const firestoreEmulator = new Firestore({
   console.log(`ESDB host      : ${eventstoreConfig.host}`)
   console.log(`Emulator UI    : http://localhost:4000/firestore`)
   console.log(`Projector name : ${projector.projectorName}`)
+  console.log(`Use <arrow down> and <enter> to quit`)
 
   projector.start()
 
   await inquirer.prompt({
     type: 'list',
     name: 'quit',
-    message: 'End emulator?',
-    choices: ['Yes, quit'],
+    message: 'Stop projector and emulator?',
+    choices: ['Yes, quit.'],
   })
 
   await projector.stop()
