@@ -3,11 +3,8 @@ on:
   push:
     branches: [trunk]
 jobs:
-  test:
+  build-and-push-docker:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [14.x]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
