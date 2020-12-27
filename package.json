@@ -23,7 +23,6 @@
     "lint": "eslint '**/*.{js,ts}' --ignore-path .gitignore --fix && lerna run lint",
     "ci:lint": "eslint '**/*.{js,ts}' --ignore-path .gitignore && lerna run lint",
     "test": "yarn ci:lint && (yarn ts-monocheck || true) && lerna run test",
-    "start-eventstore-clean": "rm -rf eventstore-data && mkdir -p eventstore-data/data && mkdir -p eventstore-data/index && mkdir -p eventstore-data/logs && yarn start-eventstore"
   },
   "workspaces": [
     "packages/*"
