@@ -1,6 +1,5 @@
 import { EventStoreDBClient, JSONRecordedEvent } from '@eventstore/db-client'
 import { Firestore } from '@google-cloud/firestore'
-import { WeewooEvent } from '@toye.io/weewoo-event-definitions'
 import { EsdbToFirestoreProjector } from '../../eventstoredb-to-firestore-projector'
 
 export const projectPosition = async (
@@ -19,8 +18,7 @@ export const projectPosition = async (
     }
 
     batch.set(firestore.collection('position').doc(event.streamId), {
-      lastKnownPosition: (event.data as WeewooEvent['LGT92MessageReceivedWithLocation'])
-        .locationWGS84,
+      lastKnownPosition: (event.data as any).position,
     })
   }
 

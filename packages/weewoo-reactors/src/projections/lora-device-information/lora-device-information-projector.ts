@@ -1,8 +1,6 @@
 import { Firestore } from '@google-cloud/firestore'
 import { EventStoreDBClient, JSONRecordedEvent } from '@eventstore/db-client'
-import inquirer from 'inquirer'
-import { EsdbToFirestoreProjector } from './eventstoredb-to-firestore-projector'
-import { execSync } from 'child_process'
+import { EsdbToFirestoreProjector } from '../../eventstoredb-to-firestore-projector'
 import { WeewooEvent } from '@toye.io/weewoo-event-definitions'
 
 export const createProjector = async (
@@ -57,70 +55,19 @@ export const createProjector = async (
   }
 
   const projector = new EsdbToFirestoreProjector(
-    'custom-projector-test',
+    'lora-device-information-projector',
     connection,
     firestore,
     handleEvent,
     {
       maxBatchSize: 100,
-      maxQueueTimeMs: 2000,
+      maxQueueTimeMs: 1000,
+      stopOnEncounteringEvent: {
+        streamId: 'IntegrationTest',
+        eventType: 'IntegrationTestEnded',
+      },
     }
   )
 
   return projector
 }
-
-const firestoreEmulatorAddress = process.env.FIREBASE_FIRESTORE_EMULATOR_ADDRESS
-const projectId = process.env.GCLOUD_PROJECT
-
-const eventstoreConfig = JSON.parse(
-  execSync(
-    'yarn run --silent firebase functions:config:get --project=weewoo-prod 2>/dev/null'
-  ).toString()
-).eventstore
-
-const eventstoreClient = new EventStoreDBClient(
-  {
-    endpoint: eventstoreConfig.host,
-  },
-  {},
-  {
-    password: eventstoreConfig.password,
-    username: eventstoreConfig.username,
-  }
-)
-
-if (firestoreEmulatorAddress == null) {
-  throw new Error(`FIREBASE_FIRESTORE_EMULATOR_ADDRESS not set`)
-}
-
-if (projectId == null) {
-  throw new Error(`GCLOUD_PROJECT not set`)
-}
-
-const firestoreEmulator = new Firestore({
-  host: firestoreEmulatorAddress.split(':')[0],
-  port: parseInt(firestoreEmulatorAddress.split(':')[1], 10),
-  ssl: false,
-  projectId,
-})
-
-;(async () => {
-  const projector = await createProjector(eventstoreClient, firestoreEmulator)
-  console.log(`ESDB host      : ${eventstoreConfig.host}`)
-  console.log(`Emulator UI    : http://localhost:4000/firestore`)
-  console.log(`Projector name : ${projector.projectorName}`)
-  console.log(`Use <arrow down> and <enter> to quit`)
-
-  projector.start()
-
-  await inquirer.prompt({
-    type: 'list',
-    name: 'quit',
-    message: 'Stop projector and emulator?',
-    choices: ['Yes, quit.'],
-  })
-
-  await projector.stop()
-  await firestoreEmulator.terminate()
-})()
