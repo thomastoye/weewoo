@@ -4,7 +4,7 @@ import {
   createFirestore,
   FirestoreForTesting,
 } from '@toye.io/weewoo-integration-test-utils'
-import { createProjector } from './lora-device-information-projector'
+import { createLoraDeviceInformationProjector } from './lora-device-information-projector'
 import { createServer } from '@toye.io/weewoo-server'
 import { expect, jest } from '@jest/globals'
 
@@ -89,7 +89,10 @@ test('Position projector', async () => {
     name: 'EndIntegrationTest',
   })
 
-  const projector = await createProjector(connection, firestore.connection)
+  const projector = createLoraDeviceInformationProjector(
+    connection,
+    firestore.connection
+  )
   await projector.start()
 
   expect(await firestore.dumpCollection('lora-device-information'))

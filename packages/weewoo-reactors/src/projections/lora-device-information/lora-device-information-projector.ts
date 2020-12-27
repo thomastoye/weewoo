@@ -3,10 +3,10 @@ import { EventStoreDBClient, JSONRecordedEvent } from '@eventstore/db-client'
 import { EsdbToFirestoreProjector } from '@toye.io/weewoo-esdb-to-firestore-projector'
 import { WeewooEvent } from '@toye.io/weewoo-event-definitions'
 
-export const createProjector = async (
+export const createLoraDeviceInformationProjector = (
   connection: EventStoreDBClient,
   firestore: Firestore
-): Promise<EsdbToFirestoreProjector> => {
+): EsdbToFirestoreProjector => {
   const handleEvent = async (
     event: JSONRecordedEvent,
     batch: FirebaseFirestore.WriteBatch
