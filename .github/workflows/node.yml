@@ -1,4 +1,4 @@
-name: node
+name: Build and run tests
 on: [push]
 jobs:
   test:
