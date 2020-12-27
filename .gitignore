@@ -123,3 +123,4 @@ packages/weewoo-server-firebase/.firebase/
 packages/weewoo-server-firebase/.firebaserc
 packages/weewoo-server-firebase/deploy/
 packages/weewoo-server-firebase/.runtimeconfig.json
+packages/weewoo-reactors/build/
