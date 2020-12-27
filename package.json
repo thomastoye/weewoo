@@ -22,7 +22,7 @@
     "build:watch": "yarn build && tsc --build packages --watch",
     "lint": "eslint '**/*.{js,ts}' --ignore-path .gitignore --fix && lerna run lint",
     "ci:lint": "eslint '**/*.{js,ts}' --ignore-path .gitignore && lerna run lint",
-    "test": "yarn ci:lint && (yarn ts-monocheck || true) && lerna run test",
+    "test": "yarn ci:lint && (yarn ts-monocheck || true) && lerna run test"
   },
   "workspaces": [
     "packages/*"
