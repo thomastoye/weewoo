@@ -55,7 +55,7 @@ export const createProjector = async (
   }
 
   const projector = new EsdbToFirestoreProjector(
-    'lora-device-information-projector',
+    'lora-device-information',
     connection,
     firestore,
     handleEvent,
