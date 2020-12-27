@@ -9,6 +9,7 @@
     "@types/inquirer": "^7.3.1",
     "@types/jest": "^26.0.19",
     "@types/streamtest": "^1.2.0",
+    "@vercel/webpack-asset-relocator-loader": "^1.0.0",
     "inquirer": "^7.3.3",
     "jest": "^26.6.3",
     "streamtest": "^2.0.0",
@@ -20,7 +21,7 @@
     "webpack-cli": "^4.3.0"
   },
   "scripts": {
-    "build": "tsc && webpack",
+    "build": "tsc && rm -rf build && webpack",
     "start": "ts-node src/index.ts",
     "test": "jest",
     "start:local": "firebase emulators:exec 'yarn ts-node src/run-against-firestore-emulator.ts' --project=123  --only=firestore --ui"
