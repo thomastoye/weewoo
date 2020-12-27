@@ -1,15 +1,12 @@
 {
-  "name": "@toye.io/weewoo-reactors",
+  "name": "@toye.io/weewoo-esdb-to-firestore-projector",
   "version": "0.0.0",
   "main": "dist/index.js",
   "devDependencies": {
     "@google-cloud/firestore": "^4.8.1",
     "@toye.io/weewoo-integration-test-utils": "^0.0.0",
-    "@toye.io/weewoo-server": "^0.0.0",
-    "@types/inquirer": "^7.3.1",
     "@types/jest": "^26.0.19",
     "@types/streamtest": "^1.2.0",
-    "inquirer": "^7.3.3",
     "jest": "^26.6.3",
     "streamtest": "^2.0.0",
     "ts-jest": "^26.4.4",
@@ -26,8 +23,6 @@
     "@eventstore/db-client": "^0.0.0-alpha.11",
     "delay": "^4.4.0",
     "ts-custom-error": "^3.2.0",
-    "tslog": "^3.0.3",
-    "@toye.io/weewoo-event-definitions": "^0.0.0",
-    "@toye.io/weewoo-esdb-to-firestore-projector": "^0.0.0"
+    "tslog": "^3.0.3"
   }
 }

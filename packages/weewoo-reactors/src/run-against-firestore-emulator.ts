@@ -1,9 +1,9 @@
 import { Firestore } from '@google-cloud/firestore'
 import { EventStoreDBClient, JSONRecordedEvent } from '@eventstore/db-client'
 import inquirer from 'inquirer'
-import { EsdbToFirestoreProjector } from './eventstoredb-to-firestore-projector'
 import { execSync } from 'child_process'
 import { WeewooEvent } from '@toye.io/weewoo-event-definitions'
+import { EsdbToFirestoreProjector } from '@toye.io/weewoo-esdb-to-firestore-projector'
 
 export const createProjector = async (
   connection: EventStoreDBClient,

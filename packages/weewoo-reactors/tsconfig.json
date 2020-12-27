@@ -12,5 +12,6 @@
     { "path": "../weewoo-integration-test-utils" },
     { "path": "../weewoo-server" },
     { "path": "../weewoo-event-definitions" },
+    { "path": "../weewoo-esdb-to-firestore-projector" },
   ]
 }

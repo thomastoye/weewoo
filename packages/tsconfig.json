@@ -11,5 +11,6 @@
     { "path": "weewoo-decode-lora-packets" },
     { "path": "weewoo-parse-cloudengine" },
     { "path": "weewoo-event-definitions" },
+    { "path": "weewoo-esdb-to-firestore-projector" },
   ]
 }
