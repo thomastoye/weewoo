@@ -16,6 +16,6 @@ jobs:
       - name: Login to docker.pkg.github.com
         run: echo ${{ secrets.GH_DOCKER_REGISTRY_PAT }} | docker login docker.pkg.github.com -u ${{ secrets.GH_DOCKER_REGISTRY_USERNAME }} --password-stdin
       - run: docker build -f projectors.Dockerfile -t docker.pkg.github.com/thomastoye/weewoo/projectors:latest .
-      - run: docker image tag docker.pkg.github.com/thomastoye/weewoo/projectors:latest docker.pkg.github.com/thomastoye/weewoo/projectors:${{ GITHUB_SHA }}-${{ GITHUB_RUN_ID }}-${{ GITHUB_RUN_NUMBER }}
+      - run: docker image tag docker.pkg.github.com/thomastoye/weewoo/projectors:latest docker.pkg.github.com/thomastoye/weewoo/projectors:${{ github }}-${{ github.run_id }}-${{ github.run_number }}
       - run: docker push docker.pkg.github.com/thomastoye/weewoo/projectors:latest
-      - run: docker push docker.pkg.github.com/thomastoye/weewoo/projectors:${{ GITHUB_SHA }}-${{ GITHUB_RUN_ID }}-${{ GITHUB_RUN_NUMBER }}
+      - run: docker push docker.pkg.github.com/thomastoye/weewoo/projectors:${{ github }}-${{ github.run_id }}-${{ github.run_number }}
