@@ -60,15 +60,15 @@ describe('LoraDeviceListComponent', () => {
     expect(component).toBeTruthy()
     expect(fixture.debugElement.queryAll(By.css('.device-row')).length).toBe(2)
     expect(fixture.debugElement.queryAll(By.css('.detail-row')).length).toBe(2)
-    expect(component.expandedDevice).toBe(null)
+    expect(component.expandedDeviceEUI).toBe(null)
 
     const firstRow = fixture.debugElement.queryAll(By.css('.device-row'))[0]
     const firstRowEl = firstRow.nativeElement as HTMLElement
 
     firstRowEl.click()
 
-    expect(component.expandedDevice).not.toBe(null)
-    expect(component.expandedDevice?.deviceEUI).toBe(
+    expect(component.expandedDeviceEUI).not.toBe(null)
+    expect(component.expandedDeviceEUI).toBe(
       firstRowEl.querySelector('code')!.innerText
     )
   })

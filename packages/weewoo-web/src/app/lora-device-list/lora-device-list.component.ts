@@ -41,7 +41,6 @@ export class LoraDeviceListComponent implements OnInit, OnDestroy {
     'lastRSSI',
     'location',
   ])
-  // expandedDevice: LoraDeviceInformation | null = null
   expandedDeviceEUI: string | null = null
 
   constructor(
