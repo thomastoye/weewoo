@@ -2689,6 +2689,11 @@
     npmlog "^4.1.2"
     write-file-atomic "^2.3.0"
 
+"@mdi/angular-material@^5.8.55":
+  version "5.8.55"
+  resolved "https://registry.yarnpkg.com/@mdi/angular-material/-/angular-material-5.8.55.tgz#0294c5784f6bd39aa3a1acfe38189965509e5578"
+  integrity sha512-MR3tLtNm/FvXSubLv1iBckJtAY4JMvNjlQJtZA1Y766GNu0bcCDgdp/7qFMZaN0EVKYMb6dQJyTBSirZoYPLZA==
+
 "@mrmlnc/readdir-enhanced@^2.2.1":
   version "2.2.1"
   resolved "https://registry.npmjs.org/@mrmlnc/readdir-enhanced/-/readdir-enhanced-2.2.1.tgz#524af240d1a360527b730475ecfa1344aa540dde"
@@ -6269,6 +6274,11 @@ date-and-time@^0.14.0:
   version "0.14.1"
   resolved "https://registry.yarnpkg.com/date-and-time/-/date-and-time-0.14.1.tgz#969634697b78956fb66b8be6fb0f39fbd631f2f6"
   integrity sha512-M4RggEH5OF2ZuCOxgOU67R6Z9ohjKbxGvAQz48vj53wLmL0bAgumkBvycR32f30pK+Og9pIR+RFDyChbaE4oLA==
+
+date-fns@^2.16.1:
+  version "2.16.1"
+  resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.16.1.tgz#05775792c3f3331da812af253e1a935851d3834b"
+  integrity sha512-sAJVKx/FqrLYHAQeN7VpJrPhagZc9R4ImZIWYRFZaaohR3KzmuK88touwsSwSVT8Qcbd4zoDsnGfX4GFB4imyQ==
 
 date-format@^2.1.0:
   version "2.1.0"
@@ -11637,6 +11647,13 @@ next-tick@~1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/next-tick/-/next-tick-1.0.0.tgz#ca86d1fe8828169b0120208e3dc8424b9db8342c"
   integrity sha1-yobR/ogoFpsBICCOPchCS524NCw=
+
+ngx-date-fns@^6.6.0:
+  version "6.6.0"
+  resolved "https://registry.yarnpkg.com/ngx-date-fns/-/ngx-date-fns-6.6.0.tgz#88f9adfa60adef1c5e7802e0ad13893dabfe19ab"
+  integrity sha512-wKA/8f096IihMQAmv/eJD2ggCK52JAjMmoq3UmJ4oE4XjXn9eBOq6SogMyPCGh7ZooetdNB6i2mckbCjnttfcg==
+  dependencies:
+    tslib "^2.0.0"
 
 nice-try@^1.0.4:
   version "1.0.5"

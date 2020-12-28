@@ -1,12 +1,13 @@
-import { Component, Inject, ViewChild } from '@angular/core'
+import { Component, Inject, OnDestroy, ViewChild } from '@angular/core'
 import { GoogleMap, MapInfoWindow, MapMarker } from '@angular/google-maps'
-import { Observable } from 'rxjs'
+import { Observable, Subject } from 'rxjs'
 import { UntilDestroy } from '@ngneat/until-destroy'
 import {
   VehicleLocation,
   VehicleLocationService,
   VEHICLE_LOCATION_SERVICE,
 } from '../services/live-vehicle-location.service'
+import { takeUntil } from 'rxjs/operators'
 
 const AMBULANCE_ICON = {
   url: '/assets/icons/ambulance.svg',
@@ -24,7 +25,7 @@ const LOGISTICS_ICON = {
   templateUrl: './vehicle-location-map.component.html',
   styleUrls: ['./vehicle-location-map.component.scss'],
 })
-export class VehicleLocationMapComponent {
+export class VehicleLocationMapComponent implements OnDestroy {
   @ViewChild(GoogleMap) googleMap: GoogleMap | undefined
   @ViewChild(MapInfoWindow) infoWindow: MapInfoWindow | undefined
 
@@ -32,6 +33,7 @@ export class VehicleLocationMapComponent {
   zoom = 8
 
   vehicleLocations$: Observable<readonly VehicleLocation[]>
+  destroy$ = new Subject()
 
   selectedVehicle: {
     marker: MapMarker
@@ -43,7 +45,9 @@ export class VehicleLocationMapComponent {
     @Inject(VEHICLE_LOCATION_SERVICE)
     private locationService: VehicleLocationService
   ) {
-    this.vehicleLocations$ = locationService.getLocations$()
+    this.vehicleLocations$ = this.locationService
+      .getLocations$()
+      .pipe(takeUntil(this.destroy$))
   }
 
   openInfoWindow(marker: MapMarker, vehicleLocation: VehicleLocation): void {
@@ -73,5 +77,9 @@ export class VehicleLocationMapComponent {
       default:
         return undefined
     }
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next()
   }
 }

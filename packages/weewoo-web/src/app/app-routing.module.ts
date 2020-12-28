@@ -7,6 +7,7 @@ import {
 import { DashboardComponent } from './dashboard/dashboard.component'
 import { VehicleLocationMapComponent } from './vehicle-location-map/vehicle-location-map.component'
 import { LoginComponent } from './login/login.component'
+import { LoraDeviceListComponent } from './lora-device-list/lora-device-list.component'
 
 const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(['login'])
 
@@ -24,6 +25,12 @@ const routes: Routes = [
   {
     path: 'login',
     component: LoginComponent,
+  },
+  {
+    path: 'devices',
+    component: LoraDeviceListComponent,
+    data: { authGuardPipe: redirectUnauthorizedToLogin },
+    canActivate: [AngularFireAuthGuard],
   },
 ]
 
