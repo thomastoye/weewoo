@@ -44,9 +44,9 @@ module.exports = {
             production: true, // optional, default is undefined
             cwd: process.cwd(), // optional, default
             debugLog: false, // optional, default
-          }
-        }
-      }
+          },
+        },
+      },
     ],
   },
   resolve: {

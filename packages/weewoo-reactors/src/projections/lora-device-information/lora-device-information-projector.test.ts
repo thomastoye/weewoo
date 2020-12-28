@@ -102,7 +102,7 @@ test('Position projector', async () => {
         "batteryVoltage": 4.034,
         "deviceEUI": "A840416621826E07",
         "isInAlarmState": true,
-        "lastRRSI": -109,
+        "lastRSSI": -109,
         "lastReceivedAt": 1606577589749,
         "locationWGS84": Object {
           "lat": 51.041712,
@@ -114,7 +114,7 @@ test('Position projector', async () => {
         "batteryVoltage": 2.885,
         "deviceEUI": "A840419821726B39",
         "isInAlarmState": true,
-        "lastRRSI": -109,
+        "lastRSSI": -109,
         "lastReceivedAt": 1606577589750,
         "locationWGS84": Object {
           "lat": 42.351976,

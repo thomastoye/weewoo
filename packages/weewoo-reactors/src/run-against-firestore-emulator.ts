@@ -33,7 +33,7 @@ export const createProjector = async (
         batteryVoltage: data.batteryVoltage,
         isInAlarmState: data.isInAlarmState,
         lastReceivedAt: data.lora.receivedAtMs,
-        lastRRSI: data.lora.baseStationRSSI,
+        lastRSSI: data.lora.baseStationRSSI,
         deviceEUI: data.lora.devEUI,
       },
       { merge: true }
