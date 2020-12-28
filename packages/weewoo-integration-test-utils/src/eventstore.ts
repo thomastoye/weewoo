@@ -12,7 +12,7 @@ export const createEventStore = async (): Promise<EventStoreForTesting> => {
 
   const command = createDockerCommand({
     name: containerName,
-    image: 'eventstore/eventstore:20.6.1-buster-slim',
+    image: 'eventstore/eventstore:20.10.0-buster-slim',
     command:
       '--insecure --ext-ip 0.0.0.0 --int-ip 0.0.0.0 --enable-atom-pub-over-http',
     ports: {
