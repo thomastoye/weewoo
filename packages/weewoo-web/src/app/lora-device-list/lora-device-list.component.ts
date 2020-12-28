@@ -10,11 +10,7 @@ import {
   FirestoreLoraDeviceInformationService,
   LORA_DEVICE_INFORMATION_SERVICE,
 } from '../services/lora-device-information.service'
-import {
-  BreakpointObserver,
-  Breakpoints,
-  BreakpointState,
-} from '@angular/cdk/layout'
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout'
 
 type DeviceDoc = {
   batteryVoltage: number
@@ -110,10 +106,10 @@ export class LoraDeviceListComponent implements OnInit, OnDestroy {
     this.breakpointObserver
       .observe([Breakpoints.Small, Breakpoints.XSmall])
       .pipe(takeUntil(this.destroy$))
-      .subscribe((state) => {
-        if (state.breakpoints[Breakpoints.XSmall]) {
+      .subscribe((breakpointState) => {
+        if (breakpointState.breakpoints[Breakpoints.XSmall]) {
           this.displayedColumns$.next(['deviceEUI', 'batteryVoltage'])
-        } else if (state.breakpoints[Breakpoints.Small]) {
+        } else if (breakpointState.breakpoints[Breakpoints.Small]) {
           this.displayedColumns$.next([
             'deviceEUI',
             'batteryVoltage',
