@@ -63,7 +63,16 @@ export class FakeLoraDeviceInformationService
           this.#devices.getValue().map((device) => {
             return {
               ...device,
+              lastReceivedAt: device.lastReceivedAt + 1000,
               lastRSSI: Math.round(Math.random() * -120),
+              locationWGS84:
+                device.locationWGS84 == null
+                  ? undefined
+                  : {
+                      lat: device.locationWGS84.lat + Math.random() / 100,
+                      lng: device.locationWGS84.lng + Math.random() / 100,
+                      receivedAt: device.locationWGS84.receivedAt + 1000,
+                    },
             }
           })
         )

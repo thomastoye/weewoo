@@ -8,18 +8,10 @@ import {
 } from '../services/current-date.service'
 import {
   FirestoreLoraDeviceInformationService,
+  LoraDeviceInformation,
   LORA_DEVICE_INFORMATION_SERVICE,
 } from '../services/lora-device-information.service'
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout'
-
-type DeviceDoc = {
-  batteryVoltage: number
-  deviceEUI: string
-  isInAlarmState: boolean
-  lastRSSI: number
-  lastReceivedAt: number
-  locationWGS84?: { lat: number; lng: number; receivedAt: number }
-}
 
 @Component({
   selector: 'app-lora-device-list',
@@ -37,7 +29,7 @@ type DeviceDoc = {
   ],
 })
 export class LoraDeviceListComponent implements OnInit, OnDestroy {
-  devices$: Observable<readonly DeviceDoc[]> = new Subject()
+  devices$: Observable<readonly LoraDeviceInformation[]> = new Subject()
   currentDate$: Observable<number> = new Subject()
   destroy$ = new Subject<void>()
 
@@ -49,7 +41,8 @@ export class LoraDeviceListComponent implements OnInit, OnDestroy {
     'lastRSSI',
     'location',
   ])
-  expandedDevice: DeviceDoc | null = null
+  // expandedDevice: LoraDeviceInformation | null = null
+  expandedDeviceEUI: string | null = null
 
   constructor(
     @Inject(CURRENT_DATE_SERVICE) private currentDate: CurrentDateService,
@@ -57,42 +50,6 @@ export class LoraDeviceListComponent implements OnInit, OnDestroy {
     private loraDeviceInformation: FirestoreLoraDeviceInformationService,
     private breakpointObserver: BreakpointObserver
   ) {}
-
-  batteryVoltageToIconName(voltage: number): string {
-    if (voltage > 4.05) {
-      return 'battery'
-    } else if (voltage > 4) {
-      return 'battery-90'
-    } else if (voltage > 3.92) {
-      return 'battery-80'
-    } else if (voltage > 3.85) {
-      return 'battery-70'
-    } else if (voltage > 3.77) {
-      return 'battery-60'
-    } else if (voltage > 3.7) {
-      return 'battery-50'
-    } else if (voltage > 3.5) {
-      return 'battery-30'
-    } else if (voltage > 3.4) {
-      return 'battery-20'
-    } else {
-      return 'battery-alert-variant-outline'
-    }
-  }
-
-  rssiToIconName(rssi: number): string {
-    if (rssi < -117) {
-      return 'network-strength-outline'
-    } else if (rssi < -110) {
-      return 'network-strength-1'
-    } else if (rssi < -90) {
-      return 'network-strength-2'
-    } else if (rssi < -70) {
-      return 'network-strength-3'
-    } else {
-      return 'network-strength-4'
-    }
-  }
 
   ngOnInit(): void {
     this.currentDate$ = this.currentDate
@@ -130,5 +87,45 @@ export class LoraDeviceListComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.destroy$.next()
+  }
+
+  batteryVoltageToIconName(voltage: number): string {
+    if (voltage > 4.05) {
+      return 'battery'
+    } else if (voltage > 4) {
+      return 'battery-90'
+    } else if (voltage > 3.92) {
+      return 'battery-80'
+    } else if (voltage > 3.85) {
+      return 'battery-70'
+    } else if (voltage > 3.77) {
+      return 'battery-60'
+    } else if (voltage > 3.7) {
+      return 'battery-50'
+    } else if (voltage > 3.5) {
+      return 'battery-30'
+    } else if (voltage > 3.4) {
+      return 'battery-20'
+    } else {
+      return 'battery-alert-variant-outline'
+    }
+  }
+
+  rssiToIconName(rssi: number): string {
+    if (rssi < -117) {
+      return 'network-strength-outline'
+    } else if (rssi < -110) {
+      return 'network-strength-1'
+    } else if (rssi < -90) {
+      return 'network-strength-2'
+    } else if (rssi < -70) {
+      return 'network-strength-3'
+    } else {
+      return 'network-strength-4'
+    }
+  }
+
+  trackByDevEUI(index: number, item: LoraDeviceInformation): string {
+    return item.deviceEUI
   }
 }
