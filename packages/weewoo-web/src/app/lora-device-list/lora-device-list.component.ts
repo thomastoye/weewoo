@@ -1,6 +1,6 @@
 import { animate, state, style, transition, trigger } from '@angular/animations'
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core'
-import { Observable, Subject } from 'rxjs'
+import { BehaviorSubject, Observable, Subject } from 'rxjs'
 import { takeUntil } from 'rxjs/operators'
 import {
   CurrentDateService,
@@ -10,6 +10,11 @@ import {
   FirestoreLoraDeviceInformationService,
   LORA_DEVICE_INFORMATION_SERVICE,
 } from '../services/lora-device-information.service'
+import {
+  BreakpointObserver,
+  Breakpoints,
+  BreakpointState,
+} from '@angular/cdk/layout'
 
 type DeviceDoc = {
   batteryVoltage: number
@@ -40,20 +45,21 @@ export class LoraDeviceListComponent implements OnInit, OnDestroy {
   currentDate$: Observable<number> = new Subject()
   destroy$ = new Subject<void>()
 
-  displayedColumns = [
+  displayedColumns$ = new BehaviorSubject([
     'deviceEUI',
     'batteryVoltage',
     'isInAlarmState',
     'lastMessageReceivedAt',
     'lastRSSI',
     'location',
-  ]
+  ])
   expandedDevice: DeviceDoc | null = null
 
   constructor(
     @Inject(CURRENT_DATE_SERVICE) private currentDate: CurrentDateService,
     @Inject(LORA_DEVICE_INFORMATION_SERVICE)
-    private loraDeviceInformation: FirestoreLoraDeviceInformationService
+    private loraDeviceInformation: FirestoreLoraDeviceInformationService,
+    private breakpointObserver: BreakpointObserver
   ) {}
 
   batteryVoltageToIconName(voltage: number): string {
@@ -100,6 +106,30 @@ export class LoraDeviceListComponent implements OnInit, OnDestroy {
     this.devices$ = this.loraDeviceInformation
       .deviceInformation$()
       .pipe(takeUntil(this.destroy$))
+
+    this.breakpointObserver
+      .observe([Breakpoints.Small, Breakpoints.XSmall])
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((state) => {
+        if (state.breakpoints[Breakpoints.XSmall]) {
+          this.displayedColumns$.next(['deviceEUI', 'batteryVoltage'])
+        } else if (state.breakpoints[Breakpoints.Small]) {
+          this.displayedColumns$.next([
+            'deviceEUI',
+            'batteryVoltage',
+            'lastMessageReceivedAt',
+          ])
+        } else {
+          this.displayedColumns$.next([
+            'deviceEUI',
+            'batteryVoltage',
+            'isInAlarmState',
+            'lastMessageReceivedAt',
+            'lastRSSI',
+            'location',
+          ])
+        }
+      })
   }
 
   ngOnDestroy(): void {
