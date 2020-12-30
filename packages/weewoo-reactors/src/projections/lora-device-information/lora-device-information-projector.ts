@@ -29,6 +29,7 @@ export const createLoraDeviceInformationProjector = (
       firestore.collection('lora-device-information').doc(event.streamId),
       {
         batteryVoltage: data.batteryVoltage,
+        isGpsTurnedOn: data.isGpsTurnedOn,
         isInAlarmState: data.isInAlarmState,
         lastReceivedAt: data.lora.receivedAtMs,
         lastRSSI: data.lora.baseStationRSSI,

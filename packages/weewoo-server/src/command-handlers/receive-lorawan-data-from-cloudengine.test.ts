@@ -63,6 +63,7 @@ test('accept packet with correct PSK', async () => {
             "gps",
           ],
         },
+        "isGpsTurnedOn": true,
         "isInAlarmState": false,
         "isLedOnForTransmissionIndications": true,
         "locationWGS84": Object {

@@ -8,6 +8,7 @@ type MotionDetectionMode =
 
 export class DecodedLGT92Packet {
   #location: Location | null = null
+  #gpsTurnedOn: boolean
   #batteryVoltage: number
   #isInAlarmState: boolean
   #isLedOnForTransmissionIndications: boolean
@@ -16,6 +17,7 @@ export class DecodedLGT92Packet {
   constructor(
     lat: number | null,
     lon: number | null,
+    gpsTurnedOn: boolean,
     batteryVoltage: number,
     isInAlarmState: boolean,
     motionDetectionMode: MotionDetectionMode,
@@ -24,6 +26,7 @@ export class DecodedLGT92Packet {
     if (lat != null && lon != null) {
       this.#location = Location.fromWGS84(lat, lon)
     }
+    this.#gpsTurnedOn = gpsTurnedOn
     this.#batteryVoltage = batteryVoltage
     this.#isInAlarmState = isInAlarmState
     this.#isLedOnForTransmissionIndications = isLedOnForTransmissionIndications
@@ -32,6 +35,10 @@ export class DecodedLGT92Packet {
 
   get location(): Location | null {
     return this.#location
+  }
+
+  get isGpsTurnedOn(): boolean {
+    return this.#gpsTurnedOn
   }
 
   get batteryVoltage(): number {
@@ -120,8 +127,17 @@ export const decodeLGT92Packet = (bytes: Buffer): DecodedLGT92Packet => {
   // 2    Roll (disabled)  - ignored
   // 2    Pitch (disabled) - ignored
 
-  const latitude = getLatitude(bytes.slice(0, 4))
-  const longitude = getLongitude(bytes.slice(4, 8))
+  let gpsTurnedOn = true
+
+  if (
+    bytes.slice(4, 8).readUIntBE(0, 4) === Math.pow(2, 32) - 1 &&
+    bytes.slice(4, 8).readUIntBE(0, 4) === Math.pow(2, 32) - 1
+  ) {
+    gpsTurnedOn = false
+  }
+
+  const latitude = gpsTurnedOn ? getLatitude(bytes.slice(0, 4)) : null
+  const longitude = gpsTurnedOn ? getLongitude(bytes.slice(4, 8)) : null
 
   const isInAlarmState = bytes[8] & 0x40 ? true : false
   const battery = (((bytes[8] & 0x3f) << 8) | bytes[9]) / 1000
@@ -148,6 +164,7 @@ export const decodeLGT92Packet = (bytes: Buffer): DecodedLGT92Packet => {
   return new DecodedLGT92Packet(
     latitude,
     longitude,
+    gpsTurnedOn,
     battery,
     isInAlarmState,
     motionDetectionMode,

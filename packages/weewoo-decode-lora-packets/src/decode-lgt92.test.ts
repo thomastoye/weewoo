@@ -10,6 +10,7 @@ test('can decode', () => {
   expect(packet.motionDetectionMode).toBe('Movement')
   expect(packet.location?.WGS84.lat).toBe(51.044896)
   expect(packet.location?.WGS84.lon).toBe(3.75563)
+  expect(packet.isGpsTurnedOn).toBe(true)
 })
 
 test('decode example from Dragino manual', () => {
@@ -24,6 +25,7 @@ test('decode example from Dragino manual', () => {
   expect(packet.motionDetectionMode).toBe('Movement')
   expect(packet.location?.WGS84.lat).toBe(42.351976)
   expect(packet.location?.WGS84.lon).toBe(-87.909457)
+  expect(packet.isGpsTurnedOn).toBe(true)
 })
 
 test('decode example without location fix', () => {
@@ -31,4 +33,12 @@ test('decode example without location fix', () => {
 
   expect(packet.location).toBe(null)
   expect(packet.batteryVoltage).toBe(4.034)
+})
+
+test('decode example with low battery', () => {
+  const packet = decodeLGT92Packet(Buffer.from('FFFFFFFFFFFFFFFF4B1463', 'hex'))
+
+  expect(packet.isGpsTurnedOn).toBe(false)
+  expect(packet.location).toBe(null)
+  expect(packet.batteryVoltage).toBe(2.836)
 })

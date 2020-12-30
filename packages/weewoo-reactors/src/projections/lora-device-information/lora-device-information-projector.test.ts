@@ -86,6 +86,17 @@ test('Position projector', async () => {
   })
 
   await server({
+    name: 'ReceiveLoraWANDataFromCloudEngine',
+    preSharedKey: cloudEnginePreSharedKey,
+    data: {
+      ...exampleDeviceData,
+      Payload: '//////////9LFGM=',
+      DevEUI: 'A840419821726B40',
+      Time: '1606577589751',
+    },
+  })
+
+  await server({
     name: 'EndIntegrationTest',
   })
 
@@ -101,6 +112,7 @@ test('Position projector', async () => {
       "LGT92-A840416621826E07": Object {
         "batteryVoltage": 4.034,
         "deviceEUI": "A840416621826E07",
+        "isGpsTurnedOn": false,
         "isInAlarmState": true,
         "lastRSSI": -109,
         "lastReceivedAt": 1606577589749,
@@ -113,6 +125,7 @@ test('Position projector', async () => {
       "LGT92-A840419821726B39": Object {
         "batteryVoltage": 2.885,
         "deviceEUI": "A840419821726B39",
+        "isGpsTurnedOn": false,
         "isInAlarmState": true,
         "lastRSSI": -109,
         "lastReceivedAt": 1606577589750,
@@ -121,6 +134,14 @@ test('Position projector', async () => {
           "lng": -87.909457,
           "receivedAt": 1606577589750,
         },
+      },
+      "LGT92-A840419821726B40": Object {
+        "batteryVoltage": 2.836,
+        "deviceEUI": "A840419821726B40",
+        "isGpsTurnedOn": true,
+        "isInAlarmState": true,
+        "lastRSSI": -109,
+        "lastReceivedAt": 1606577589751,
       },
     }
   `)

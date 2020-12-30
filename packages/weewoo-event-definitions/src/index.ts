@@ -4,6 +4,7 @@ export type WeewooEvent = {
       lat: number
       lng: number
     }
+    isGpsTurnedOn: boolean
     batteryVoltage: number
     isInAlarmState: boolean
     motionDetectionMode:
@@ -36,6 +37,7 @@ export type WeewooEvent = {
   }
   LGT92MessageReceivedWithoutLocation: {
     batteryVoltage: number
+    isGpsTurnedOn: boolean
     isInAlarmState: boolean
     motionDetectionMode:
       | 'Disabled'

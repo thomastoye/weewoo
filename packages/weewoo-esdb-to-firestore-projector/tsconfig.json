@@ -8,5 +8,7 @@
   "include": [
     "src/**/*"
   ],
-  "references": []
+  "references": [
+    { "path": "../weewoo-integration-test-utils" }
+  ]
 }

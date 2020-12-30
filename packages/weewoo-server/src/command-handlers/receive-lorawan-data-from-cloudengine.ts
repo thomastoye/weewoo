@@ -40,6 +40,7 @@ export const receiveLoraWANDataFromCloudEngine = (
         lat: packet.payload.location.WGS84.lat,
         lng: packet.payload.location.WGS84.lon,
       },
+      isGpsTurnedOn: packet.payload.isGpsTurnedOn,
       batteryVoltage: packet.payload.batteryVoltage,
       isInAlarmState: packet.payload.isInAlarmState,
       motionDetectionMode: packet.payload.motionDetectionMode,
@@ -87,6 +88,7 @@ export const receiveLoraWANDataFromCloudEngine = (
     const data: WeewooEvent['LGT92MessageReceivedWithoutLocation'] = {
       batteryVoltage: packet.payload.batteryVoltage,
       isInAlarmState: packet.payload.isInAlarmState,
+      isGpsTurnedOn: packet.payload.isGpsTurnedOn,
       motionDetectionMode: packet.payload.motionDetectionMode,
       isLedOnForTransmissionIndications:
         packet.payload.isLedOnForTransmissionIndications,
