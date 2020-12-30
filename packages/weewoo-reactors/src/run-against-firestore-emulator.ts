@@ -75,7 +75,7 @@ const projectId = process.env.GCLOUD_PROJECT
 
 const eventstoreConfig = JSON.parse(
   execSync(
-    `yarn run --silent firebase functions:config:get --project=${projectId} 2>/dev/null`
+    `yarn run --silent firebase functions:config:get --project=weewoo-prod 2>/dev/null`
   ).toString()
 ).eventstore
 

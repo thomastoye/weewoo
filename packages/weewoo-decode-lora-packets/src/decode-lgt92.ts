@@ -46,6 +46,9 @@ export class DecodedLGT92Packet {
   }
 
   get batteryStatus(): '80-100%' | '60-80%' | '40-60%' | '20-40%' | '0-20%' {
+    // Highest voltage seen: 4.05v
+    // Lowest voltage seen: 2.836v
+    // Battery voltage drops very fast below 3.45v
     if (this.batteryVoltage > 4) {
       return '80-100%'
     }
