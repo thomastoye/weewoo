@@ -15,7 +15,7 @@ export const createLoraDeviceInformationProjector = (
       ![
         'LGT92MessageReceivedWithLocation',
         'LGT92MessageReceivedWithoutLocation',
-      ].includes(event.eventType) ||
+      ].includes(event.type) ||
       !event.streamId.startsWith('LGT92-')
     ) {
       return
@@ -37,7 +37,7 @@ export const createLoraDeviceInformationProjector = (
       { merge: true }
     )
 
-    if (event.eventType === 'LGT92MessageReceivedWithLocation') {
+    if (event.type === 'LGT92MessageReceivedWithLocation') {
       const locationPayload = event.data as WeewooEvent['LGT92MessageReceivedWithLocation']
 
       batch.set(

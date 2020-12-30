@@ -17,7 +17,7 @@ export const createProjector = async (
       ![
         'LGT92MessageReceivedWithLocation',
         'LGT92MessageReceivedWithoutLocation',
-      ].includes(event.eventType) ||
+      ].includes(event.type) ||
       !event.streamId.startsWith('LGT92-')
     ) {
       return
@@ -39,7 +39,7 @@ export const createProjector = async (
       { merge: true }
     )
 
-    if (event.eventType === 'LGT92MessageReceivedWithLocation') {
+    if (event.type === 'LGT92MessageReceivedWithLocation') {
       const locationPayload = event.data as WeewooEvent['LGT92MessageReceivedWithLocation']
 
       batch.set(
@@ -75,7 +75,7 @@ const projectId = process.env.GCLOUD_PROJECT
 
 const eventstoreConfig = JSON.parse(
   execSync(
-    'yarn run --silent firebase functions:config:get --project=weewoo-prod 2>/dev/null'
+    `yarn run --silent firebase functions:config:get --project=${projectId} 2>/dev/null`
   ).toString()
 ).eventstore
 

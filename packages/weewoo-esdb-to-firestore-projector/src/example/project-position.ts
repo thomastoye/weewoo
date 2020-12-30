@@ -11,7 +11,7 @@ export const projectPosition = async (
     batch: FirebaseFirestore.WriteBatch
   ) => {
     if (
-      event.eventType !== 'VehicleMoved' ||
+      event.type !== 'VehicleMoved' ||
       !event.streamId.startsWith('Vehicle')
     ) {
       return

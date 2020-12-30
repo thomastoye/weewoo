@@ -35,7 +35,7 @@ export const receiveLoraWANDataFromCloudEngine = (
   }
 
   if (packet.payload.location != null) {
-    const payload: WeewooEvent['LGT92MessageReceivedWithLocation'] = {
+    const data: WeewooEvent['LGT92MessageReceivedWithLocation'] = {
       locationWGS84: {
         lat: packet.payload.location.WGS84.lat,
         lng: packet.payload.location.WGS84.lon,
@@ -69,8 +69,8 @@ export const receiveLoraWANDataFromCloudEngine = (
     }
 
     const event = jsonEvent({
-      eventType: 'LGT92MessageReceivedWithLocation',
-      payload,
+      type: 'LGT92MessageReceivedWithLocation',
+      data,
     })
 
     return {
@@ -84,7 +84,7 @@ export const receiveLoraWANDataFromCloudEngine = (
       ],
     }
   } else {
-    const payload: WeewooEvent['LGT92MessageReceivedWithoutLocation'] = {
+    const data: WeewooEvent['LGT92MessageReceivedWithoutLocation'] = {
       batteryVoltage: packet.payload.batteryVoltage,
       isInAlarmState: packet.payload.isInAlarmState,
       motionDetectionMode: packet.payload.motionDetectionMode,
@@ -114,8 +114,8 @@ export const receiveLoraWANDataFromCloudEngine = (
     }
 
     const event = jsonEvent({
-      eventType: 'LGT92MessageReceivedWithoutLocation',
-      payload,
+      type: 'LGT92MessageReceivedWithoutLocation',
+      data,
     })
 
     return {

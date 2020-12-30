@@ -26,22 +26,11 @@ afterEach(async () => {
 test('Position projector', async () => {
   const connection = eventStore.connection
 
-  // await server({
-  //   name: 'RenameVehicle',
-  //   newVehicleName: 'Oscar 37',
-  //   vehicleId: 'O37',
-  // })
-  // await server({
-  //   name: 'RenameVehicle',
-  //   newVehicleName: 'Oscar 38',
-  //   vehicleId: 'O38',
-  // })
-
   await connection.appendToStream(
     'Vehicle-O37',
     jsonEvent({
-      eventType: 'VehicleMoved',
-      payload: {
+      type: 'VehicleMoved',
+      data: {
         position: {
           lat: 6.051,
           lon: 3.123456,
@@ -54,8 +43,8 @@ test('Position projector', async () => {
   await connection.appendToStream(
     'Vehicle-O38',
     jsonEvent({
-      eventType: 'VehicleMoved',
-      payload: {
+      type: 'VehicleMoved',
+      data: {
         position: {
           lat: 5.0,
           lon: 3.123456,
@@ -68,8 +57,8 @@ test('Position projector', async () => {
   await connection.appendToStream(
     'Vehicle-O37',
     jsonEvent({
-      eventType: 'VehicleMoved',
-      payload: {
+      type: 'VehicleMoved',
+      data: {
         position: {
           lat: 6.052,
           lon: 3.123456,
@@ -82,8 +71,8 @@ test('Position projector', async () => {
   await connection.appendToStream(
     'Vehicle-O38',
     jsonEvent({
-      eventType: 'VehicleMoved',
-      payload: {
+      type: 'VehicleMoved',
+      data: {
         position: {
           lat: 5.1,
           lon: 3.133456,
@@ -96,8 +85,8 @@ test('Position projector', async () => {
   await connection.appendToStream(
     'Vehicle-O38',
     jsonEvent({
-      eventType: 'VehicleMoved',
-      payload: {
+      type: 'VehicleMoved',
+      data: {
         position: {
           lat: 5.0,
           lon: 3.123456,
@@ -110,8 +99,8 @@ test('Position projector', async () => {
   await connection.appendToStream(
     'Vehicle-O38',
     jsonEvent({
-      eventType: 'VehicleMoved',
-      payload: {
+      type: 'VehicleMoved',
+      data: {
         position: {
           lat: 5.011,
           lon: 3.16,
@@ -124,8 +113,8 @@ test('Position projector', async () => {
   await connection.appendToStream(
     'IntegrationTest',
     jsonEvent({
-      eventType: 'IntegrationTestEnded',
-      payload: {},
+      type: 'IntegrationTestEnded',
+      data: {},
     })
   )
 

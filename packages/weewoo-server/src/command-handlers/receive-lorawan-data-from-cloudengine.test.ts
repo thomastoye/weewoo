@@ -44,10 +44,10 @@ test('accept packet with correct PSK', async () => {
   if (handled.result === 'accepted') {
     expect(handled.events).toHaveLength(1)
     expect(handled.events[0].stream).toBe('LGT92-A840416621826E07')
-    expect(handled.events[0].event.eventType).toBe(
+    expect(handled.events[0].event.type).toBe(
       'LGT92MessageReceivedWithLocation'
     )
-    expect(handled.events[0].event.payload).toMatchInlineSnapshot(`
+    expect(handled.events[0].event.data).toMatchInlineSnapshot(`
       Object {
         "batteryVoltage": 4.03,
         "cloudEngine": Object {

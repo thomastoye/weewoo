@@ -11,8 +11,8 @@ export const updateVehiclePosition: CommandHandler = async (command) => {
   }
 
   const event = jsonEvent({
-    eventType: 'VehicleMoved',
-    payload: {
+    type: 'VehicleMoved',
+    data: {
       position: {
         lat: command.position.lat,
         lon: command.position.lon,

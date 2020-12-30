@@ -25,8 +25,8 @@ const registerRejectedCommand = async (
     await connection.appendToStream(
       'RejectedCommand',
       jsonEvent({
-        eventType: 'CommandRejected',
-        payload: {
+        type: 'CommandRejected',
+        data: {
           command,
           rejection: {
             reason: rejection.reason,

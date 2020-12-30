@@ -10,7 +10,7 @@ export const endIntegrationTest: CommandHandler = async (command) => {
     })
   }
 
-  const event = jsonEvent({ eventType: 'IntegrationTestEnded', payload: {} })
+  const event = jsonEvent({ type: 'IntegrationTestEnded', data: {} })
 
   return {
     result: 'accepted',

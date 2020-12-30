@@ -143,8 +143,7 @@ export class EsdbToFirestoreProjector {
         this.#stopOnEncounteringEvent != null &&
         resolvedEvent.event?.streamId ===
           this.#stopOnEncounteringEvent.streamId &&
-        resolvedEvent.event.eventType ===
-          this.#stopOnEncounteringEvent.eventType
+        resolvedEvent.event.type === this.#stopOnEncounteringEvent.eventType
       )
     }
 

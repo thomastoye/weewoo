@@ -11,8 +11,8 @@ export const renameVehicle: CommandHandler = async (command) => {
   }
 
   const event = jsonEvent({
-    eventType: 'VehicleRenamed',
-    payload: {
+    type: 'VehicleRenamed',
+    data: {
       name: command.newVehicleName,
     },
   })
