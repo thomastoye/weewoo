@@ -1312,13 +1312,14 @@
     minimatch "^3.0.4"
     strip-json-comments "^3.1.1"
 
-"@eventstore/db-client@^0.0.0-alpha.12":
-  version "0.0.0-alpha.12"
-  resolved "https://registry.yarnpkg.com/@eventstore/db-client/-/db-client-0.0.0-alpha.12.tgz#1a8ab115ff7da7f96a2bee259c273b2604ad234c"
-  integrity sha512-7ykLyisEFXYM7p9K4/JqWZDCiCZn9jgp8vaQWfKnE015EQIsGdR4A3TK/kG5qtPpMJK83K9hiqOaHdDjqzIUdA==
+"@eventstore/db-client@^0.0.0-alpha.13":
+  version "0.0.0-alpha.13"
+  resolved "https://registry.npmjs.org/@eventstore/db-client/-/db-client-0.0.0-alpha.13.tgz#e4e5db57b8bc98939c3c9d77079527de5fba6221"
+  integrity sha512-SzTZdGufk9D1Qo9a04xL2j26csk6NW4uhVm8L9iOY67FEeYxnwq31B7wnwiUHj2HJbx9o7s+eAl6NciAZKLMHw==
   dependencies:
     "@grpc/grpc-js" "^1.2.2"
     "@types/debug" "^4.1.5"
+    "@types/google-protobuf" "^3.7.4"
     "@types/node" "^12.12.47"
     debug "^4.3.1"
     google-protobuf "^3.14.0"
@@ -3172,6 +3173,11 @@
   dependencies:
     "@types/minimatch" "*"
     "@types/node" "*"
+
+"@types/google-protobuf@^3.7.4":
+  version "3.7.4"
+  resolved "https://registry.npmjs.org/@types/google-protobuf/-/google-protobuf-3.7.4.tgz#1621c50ceaf5aefa699851da8e0ea606a2943a39"
+  integrity sha512-6PjMFKl13cgB4kRdYtvyjKl8VVa0PXS2IdVxHhQ8GEKbxBkyJtSbaIeK1eZGjDKN7dvUh4vkOvU9FMwYNv4GQQ==
 
 "@types/googlemaps@3.43.2":
   version "3.43.2"

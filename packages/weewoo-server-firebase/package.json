@@ -15,7 +15,7 @@
     "webpack-cli": "^4.3.1"
   },
   "dependencies": {
-    "@eventstore/db-client": "^0.0.0-alpha.12",
+    "@eventstore/db-client": "^0.0.0-alpha.13",
     "@toye.io/weewoo-server": "0.0.0",
     "firebase-admin": "^9.4.2",
     "firebase-functions": "^3.13.0"

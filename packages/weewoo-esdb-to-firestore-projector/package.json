@@ -20,7 +20,7 @@
     "start:local": "firebase emulators:exec 'yarn ts-node src/run-against-firestore-emulator.ts' --project=123  --only=firestore --ui"
   },
   "dependencies": {
-    "@eventstore/db-client": "^0.0.0-alpha.12",
+    "@eventstore/db-client": "^0.0.0-alpha.13",
     "delay": "^4.4.0",
     "ts-custom-error": "^3.2.0",
     "tslog": "^3.0.5"

@@ -27,7 +27,7 @@
     "start:local": "firebase emulators:exec 'yarn ts-node src/run-against-firestore-emulator.ts' --project=123  --only=firestore --ui"
   },
   "dependencies": {
-    "@eventstore/db-client": "^0.0.0-alpha.12",
+    "@eventstore/db-client": "^0.0.0-alpha.13",
     "@toye.io/weewoo-esdb-to-firestore-projector": "^0.0.0",
     "@toye.io/weewoo-event-definitions": "^0.0.0",
     "delay": "^4.4.0",
