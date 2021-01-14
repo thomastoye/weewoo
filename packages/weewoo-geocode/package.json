@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "main": "dist/index.js",
   "devDependencies": {
-    "@types/jest": "^26.0.19",
+    "@types/jest": "^26.0.20",
     "jest": "^26.6.3",
     "nock": "^13.0.5",
     "ts-jest": "^26.4.4",
@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@toye.io/weewoo-location": "^0.0.0",
-    "fp-ts": "^2.9.2"
+    "fp-ts": "^2.9.3"
   },
   "scripts": {
     "build": "tsc",
