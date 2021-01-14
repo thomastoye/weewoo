@@ -28,7 +28,7 @@
     "@angular/router": "~11.0.9",
     "@mdi/angular-material": "^5.8.55",
     "@ngneat/until-destroy": "^8.0.3",
-    "@types/googlemaps": "3.40.5",
+    "@types/googlemaps": "3.43.2",
     "date-fns": "^2.16.1",
     "firebase": "^8.2.2",
     "ngx-date-fns": "^7.0.0",
